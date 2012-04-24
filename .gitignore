@@ -1,0 +1,15 @@
+*.o
+*.pyc
+*~
+*.swp[on]
+local_settings.py
+env/*
+www/*
+conf/*
+*.rar
+*.zip
+*.tar.gz
+*.tgz
+main/main/static/*
+main/main/media/keys/*
+main/main/media/license/*
