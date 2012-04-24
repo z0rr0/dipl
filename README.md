@@ -1,0 +1,4 @@
+dipl
+====
+
+Testin diplom work
