@@ -1,0 +1,59 @@
+{% extends "base.html" %}
+{% load widget_tweaks %}
+{% load itags %}
+{% block title %}{{ action }} поставщика{% endblock %}
+
+{% block content %}
+    <h1>{{ action }} данных о поставщике</h1>
+    <br />
+    <form class="form-horizontal" method="POST" action="">
+        {% csrf_token %}{{ form.management_form }}
+        <div class="control-group{{ form.name.errors|errorcss }}">
+            <label class="control-label" for="id_name">{{ form.name.label }}</label>
+            <div class="controls">
+                {{ form.name|add_class:"span3"}}<span class="help-inline">{{ form.name.errors|lower }}</span>
+            <p class="help-block">{{ form.name.help_text }}</p>
+            </div>
+        </div>
+        <div class="control-group{{ form.phone.errors|errorcss }}">
+            <label class="control-label" for="id_phone">{{ form.phone.label }}</label>
+            <div class="controls">
+                {{ form.phone|add_class:"span3"}}<span class="help-inline">{{ form.phone.errors|lower }}</span>
+            <p class="help-block">{{ form.phone.help_text }}</p>
+            </div>
+        </div>
+        <div class="control-group{{ form.email.errors|errorcss }}">
+            <label class="control-label" for="id_email">{{ form.email.label }}</label>
+            <div class="controls">
+                {{ form.email|add_class:"span3"}}<span class="help-inline">{{ form.email.errors|lower }}</span>
+            <p class="help-block">{{ form.email.help_text }}</p>
+            </div>
+        </div>
+        <div class="control-group{{ form.site.errors|errorcss }}">
+            <label class="control-label" for="id_site">{{ form.site.label }}</label>
+            <div class="controls">
+                {{ form.site|add_class:"span3"}}<span class="help-inline">{{ form.site.errors|lower }}</span>
+            <p class="help-block">{{ form.site.help_text }}</p>
+            </div>
+        </div>
+        <div class="control-group{{ form.address.errors|errorcss }}">
+            <label class="control-label" for="id_address">{{ form.address.label }}</label>
+            <div class="controls">
+                {{ form.address|attr:"rows:2"}}<span class="help-inline">{{ form.address.errors|lower }}</span>
+            <p class="help-block">{{ form.address.help_text }}</p>
+            </div>
+        </div>
+        <div class="control-group{{ form.comment.errors|errorcss }}">
+            <label class="control-label" for="id_comment">{{ form.comment.label }}</label>
+            <div class="controls">
+                {{ form.comment|attr:"rows:2"}}<span class="help-inline">{{ form.comment.errors|lower }}</span>
+            <p class="help-block">{{ form.comment.help_text }}</p>
+            </div>
+        </div>
+
+        <div class="form-actions">
+            <button class="btn btn-primary" type="submit">Сохранить</button>
+            <button class="btn" type="reset">Отменить</button>
+        </div>
+    </form>
+{% endblock content %}

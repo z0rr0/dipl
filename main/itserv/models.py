@@ -29,7 +29,8 @@ class Provider(models.Model):
     u"""
     Поставщики
     """
-    name = models.CharField(max_length=127, verbose_name=u'поставщик', db_index=True, help_text=u'название организации или предпринимателя')
+    name = models.CharField(max_length=127, verbose_name=u'название', unique = True, help_text=u'название организации или предпринимателя')
+    address = models.TextField(verbose_name = u'адрес', blank=True, null=True, help_text=u'почтовый адрес')
     phone = models.CharField(max_length=15, verbose_name=u'телефон', help_text=u'номер телефона')
     email = models.EmailField(max_length=255, verbose_name=u'email', blank=True, null=True, help_text=u'адрес электронной почты')
     site = models.URLField(max_length=255, verbose_name=u'сайт', blank=True, null=True, help_text=u'адрес сайта поставщика (если есть)')
@@ -42,6 +43,8 @@ class Provider(models.Model):
 
     class Meta:
         ordering = ['name']
+        verbose_name = u"поставщик"
+        verbose_name_plural = u"поставщики"
 
 class Product(models.Model):
     u"""
@@ -61,6 +64,8 @@ class Product(models.Model):
 
     class Meta:
         ordering = ['service', 'name']
+        verbose_name = u"товар/услуга"
+        verbose_name_plural = u"товары/услуги"
 
 class Contract(models.Model):
     u"""
@@ -81,6 +86,8 @@ class Contract(models.Model):
 
     class Meta:
         ordering = ['date']
+        verbose_name = u"сделка"
+        verbose_name_plural = u"сделки"
 
 class Reqlist(models.Model):
     u"""
@@ -99,3 +106,5 @@ class Reqlist(models.Model):
 
     class Meta:
         ordering = ['contract', 'client__name', 'product__service', 'product__name', 'created']
+        verbose_name = u"заявка"
+        verbose_name_plural = u"заявки"

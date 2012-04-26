@@ -212,7 +212,8 @@ CACHES = {
     }
 }
 
-FIRM = u"ITСервис"
+# LOGIN_REDIRECT_URL = '/accounts/profile/'
+LOGIN_REDIRECT_URL = '/'
 
 # rewrite global setting vars
 try:

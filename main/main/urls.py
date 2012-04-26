@@ -7,6 +7,7 @@ from django.contrib import admin
 admin.autodiscover()
 
 from django.contrib.auth.views import login, logout
+from itserv.models import *
 
 urlpatterns = patterns('',
     # accounts
@@ -22,8 +23,26 @@ urlpatterns = patterns('',
     # Uncomment the next line to enable the admin:
     url(r'^admin/', include(admin.site.urls)),
 
-    # index page
+    # главная страница
     url(r'^$', 'itserv.views.index', {'vtemplate': 'index.html'}),
+
+    # поставщики
+    # полный список
+    url(r'^providers/$', 'itserv.views.obj_all', {
+        'vtemplate': 'provider_home.html',
+        'model': Provider
+        }),
+    # удаление поставщика
+    (r'^provider/delete/(?P<id>\d+)/?$', 'itserv.views.obj_delete', {
+        'redirecturl': '/providers/',
+        'model': Provider, 
+        'perm': 'itserv.delete_provider'}),
+    # редактирование данных о поставщике
+    (r'^provider/edit/(?P<id>\d+)/?$', 'itserv.views.provider_edit', {
+        'vtemplate': 'provider_edit.html'}),
+    # добавление данных о поставщике
+    (r'^provider/add/?$', 'itserv.views.provider_add', {
+        'vtemplate': 'provider_edit.html'}),
 )
 
 # media content                   

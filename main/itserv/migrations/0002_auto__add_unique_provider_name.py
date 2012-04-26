@@ -8,91 +8,18 @@ from django.db import models
 class Migration(SchemaMigration):
 
     def forwards(self, orm):
-        # Adding model 'Client'
-        db.create_table('itserv_client', (
-            ('id', self.gf('django.db.models.fields.AutoField')(primary_key=True)),
-            ('name', self.gf('django.db.models.fields.CharField')(max_length=127, db_index=True)),
-            ('phone', self.gf('django.db.models.fields.CharField')(max_length=15)),
-            ('email', self.gf('django.db.models.fields.EmailField')(max_length=255, null=True, blank=True)),
-            ('address', self.gf('django.db.models.fields.TextField')(null=True, blank=True)),
-            ('discont', self.gf('django.db.models.fields.FloatField')(default=0)),
-            ('comment', self.gf('django.db.models.fields.TextField')(null=True, blank=True)),
-            ('modified', self.gf('django.db.models.fields.DateTimeField')(auto_now=True, auto_now_add=True, blank=True)),
-            ('created', self.gf('django.db.models.fields.DateTimeField')(auto_now_add=True, blank=True)),
-        ))
-        db.send_create_signal('itserv', ['Client'])
+        # Removing index on 'Provider', fields ['name']
+        db.delete_index('itserv_provider', ['name'])
 
-        # Adding model 'Provider'
-        db.create_table('itserv_provider', (
-            ('id', self.gf('django.db.models.fields.AutoField')(primary_key=True)),
-            ('name', self.gf('django.db.models.fields.CharField')(max_length=127, db_index=True)),
-            ('address', self.gf('django.db.models.fields.TextField')(null=True, blank=True)),
-            ('phone', self.gf('django.db.models.fields.CharField')(max_length=15)),
-            ('email', self.gf('django.db.models.fields.EmailField')(max_length=255, null=True, blank=True)),
-            ('site', self.gf('django.db.models.fields.URLField')(max_length=255, null=True, blank=True)),
-            ('comment', self.gf('django.db.models.fields.TextField')(null=True, blank=True)),
-            ('modified', self.gf('django.db.models.fields.DateTimeField')(auto_now=True, auto_now_add=True, blank=True)),
-            ('created', self.gf('django.db.models.fields.DateTimeField')(auto_now_add=True, blank=True)),
-        ))
-        db.send_create_signal('itserv', ['Provider'])
-
-        # Adding model 'Product'
-        db.create_table('itserv_product', (
-            ('id', self.gf('django.db.models.fields.AutoField')(primary_key=True)),
-            ('provider', self.gf('django.db.models.fields.related.ForeignKey')(to=orm['itserv.Provider'], null=True, on_delete=models.SET_NULL, blank=True)),
-            ('name', self.gf('django.db.models.fields.CharField')(unique=True, max_length=127)),
-            ('service', self.gf('django.db.models.fields.BooleanField')(default=False, db_index=True)),
-            ('price', self.gf('django.db.models.fields.FloatField')(default=0)),
-            ('rest', self.gf('django.db.models.fields.PositiveIntegerField')(default=0, db_index=True)),
-            ('comment', self.gf('django.db.models.fields.TextField')(null=True, blank=True)),
-            ('modified', self.gf('django.db.models.fields.DateTimeField')(auto_now=True, auto_now_add=True, blank=True)),
-            ('created', self.gf('django.db.models.fields.DateTimeField')(auto_now_add=True, blank=True)),
-        ))
-        db.send_create_signal('itserv', ['Product'])
-
-        # Adding model 'Contract'
-        db.create_table('itserv_contract', (
-            ('id', self.gf('django.db.models.fields.AutoField')(primary_key=True)),
-            ('user', self.gf('django.db.models.fields.related.ForeignKey')(to=orm['auth.User'])),
-            ('discont', self.gf('django.db.models.fields.FloatField')(default=0)),
-            ('total_all', self.gf('django.db.models.fields.FloatField')(default=0)),
-            ('total_disc', self.gf('django.db.models.fields.FloatField')(default=0)),
-            ('number', self.gf('django.db.models.fields.CharField')(unique=True, max_length=50)),
-            ('date', self.gf('django.db.models.fields.DateField')(db_index=True)),
-            ('comment', self.gf('django.db.models.fields.TextField')(null=True, blank=True)),
-            ('modified', self.gf('django.db.models.fields.DateTimeField')(auto_now=True, auto_now_add=True, blank=True)),
-            ('created', self.gf('django.db.models.fields.DateTimeField')(auto_now_add=True, blank=True)),
-        ))
-        db.send_create_signal('itserv', ['Contract'])
-
-        # Adding model 'Reqlist'
-        db.create_table('itserv_reqlist', (
-            ('id', self.gf('django.db.models.fields.AutoField')(primary_key=True)),
-            ('client', self.gf('django.db.models.fields.related.ForeignKey')(to=orm['itserv.Client'])),
-            ('contract', self.gf('django.db.models.fields.related.ForeignKey')(to=orm['itserv.Contract'], null=True, blank=True)),
-            ('product', self.gf('django.db.models.fields.related.ForeignKey')(to=orm['itserv.Product'])),
-            ('number', self.gf('django.db.models.fields.PositiveIntegerField')(default=1)),
-            ('price', self.gf('django.db.models.fields.FloatField')(null=True, blank=True)),
-            ('modified', self.gf('django.db.models.fields.DateTimeField')(auto_now=True, auto_now_add=True, blank=True)),
-            ('created', self.gf('django.db.models.fields.DateTimeField')(auto_now_add=True, blank=True)),
-        ))
-        db.send_create_signal('itserv', ['Reqlist'])
+        # Adding unique constraint on 'Provider', fields ['name']
+        db.create_unique('itserv_provider', ['name'])
 
     def backwards(self, orm):
-        # Deleting model 'Client'
-        db.delete_table('itserv_client')
+        # Removing unique constraint on 'Provider', fields ['name']
+        db.delete_unique('itserv_provider', ['name'])
 
-        # Deleting model 'Provider'
-        db.delete_table('itserv_provider')
-
-        # Deleting model 'Product'
-        db.delete_table('itserv_product')
-
-        # Deleting model 'Contract'
-        db.delete_table('itserv_contract')
-
-        # Deleting model 'Reqlist'
-        db.delete_table('itserv_reqlist')
+        # Adding index on 'Provider', fields ['name']
+        db.create_index('itserv_provider', ['name'])
 
     models = {
         'auth.group': {
@@ -176,7 +103,7 @@ class Migration(SchemaMigration):
             'email': ('django.db.models.fields.EmailField', [], {'max_length': '255', 'null': 'True', 'blank': 'True'}),
             'id': ('django.db.models.fields.AutoField', [], {'primary_key': 'True'}),
             'modified': ('django.db.models.fields.DateTimeField', [], {'auto_now': 'True', 'auto_now_add': 'True', 'blank': 'True'}),
-            'name': ('django.db.models.fields.CharField', [], {'max_length': '127', 'db_index': 'True'}),
+            'name': ('django.db.models.fields.CharField', [], {'unique': 'True', 'max_length': '127'}),
             'phone': ('django.db.models.fields.CharField', [], {'max_length': '15'}),
             'site': ('django.db.models.fields.URLField', [], {'max_length': '255', 'null': 'True', 'blank': 'True'})
         },
