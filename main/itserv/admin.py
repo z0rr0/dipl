@@ -1,6 +1,6 @@
 #-*- coding: utf-8 -*-
 from django.contrib import admin
-from itserv.models import Client, Provider, Product, Contract, CRequest
+from itserv.models import Client, Provider, Product, Contract, Reqlist
 
 class ClientAdmin(admin.ModelAdmin):
     # list_display = ('id', 'name', 'student', 'key', 'comment', 'date_start')
@@ -20,15 +20,15 @@ class ContractAdmin(admin.ModelAdmin):
     search_fields = ('number',)
     list_filter = ('user',)
 
-class CRequestAdmin(admin.ModelAdmin):
-    list_display = ('contract', 'product', 'number')
-    search_fields = ('number',)
-    list_filter = ('contract',)
+class ReqlistAdmin(admin.ModelAdmin):
+    list_display = ('client', 'contract', 'product', 'number', 'price')
+    search_fields = ('product__name', 'client__name')
+    list_filter = ('client', 'contract',)
 
 admin.site.register(Client, ClientAdmin)
 admin.site.register(Provider, ProviderAdmin)
 admin.site.register(Product, ProductAdmin)
 admin.site.register(Contract, ContractAdmin)
-admin.site.register(CRequest, CRequestAdmin)
+admin.site.register(Reqlist, ReqlistAdmin)
 
 

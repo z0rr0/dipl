@@ -52,7 +52,6 @@ class Migration(SchemaMigration):
         # Adding model 'Contract'
         db.create_table('itserv_contract', (
             ('id', self.gf('django.db.models.fields.AutoField')(primary_key=True)),
-            ('client', self.gf('django.db.models.fields.related.ForeignKey')(to=orm['itserv.Client'])),
             ('user', self.gf('django.db.models.fields.related.ForeignKey')(to=orm['auth.User'])),
             ('discont', self.gf('django.db.models.fields.FloatField')(default=0)),
             ('total_all', self.gf('django.db.models.fields.FloatField')(default=0)),
@@ -65,16 +64,18 @@ class Migration(SchemaMigration):
         ))
         db.send_create_signal('itserv', ['Contract'])
 
-        # Adding model 'CRequest'
-        db.create_table('itserv_crequest', (
+        # Adding model 'Reqlist'
+        db.create_table('itserv_reqlist', (
             ('id', self.gf('django.db.models.fields.AutoField')(primary_key=True)),
+            ('client', self.gf('django.db.models.fields.related.ForeignKey')(to=orm['itserv.Client'])),
             ('contract', self.gf('django.db.models.fields.related.ForeignKey')(to=orm['itserv.Contract'], null=True, blank=True)),
             ('product', self.gf('django.db.models.fields.related.ForeignKey')(to=orm['itserv.Product'])),
             ('number', self.gf('django.db.models.fields.PositiveIntegerField')(default=1)),
+            ('price', self.gf('django.db.models.fields.FloatField')(null=True, blank=True)),
             ('modified', self.gf('django.db.models.fields.DateTimeField')(auto_now=True, auto_now_add=True, blank=True)),
             ('created', self.gf('django.db.models.fields.DateTimeField')(auto_now_add=True, blank=True)),
         ))
-        db.send_create_signal('itserv', ['CRequest'])
+        db.send_create_signal('itserv', ['Reqlist'])
 
     def backwards(self, orm):
         # Deleting model 'Client'
@@ -89,8 +90,8 @@ class Migration(SchemaMigration):
         # Deleting model 'Contract'
         db.delete_table('itserv_contract')
 
-        # Deleting model 'CRequest'
-        db.delete_table('itserv_crequest')
+        # Deleting model 'Reqlist'
+        db.delete_table('itserv_reqlist')
 
     models = {
         'auth.group': {
@@ -143,7 +144,6 @@ class Migration(SchemaMigration):
         },
         'itserv.contract': {
             'Meta': {'ordering': "['date']", 'object_name': 'Contract'},
-            'client': ('django.db.models.fields.related.ForeignKey', [], {'to': "orm['itserv.Client']"}),
             'comment': ('django.db.models.fields.TextField', [], {'null': 'True', 'blank': 'True'}),
             'created': ('django.db.models.fields.DateTimeField', [], {'auto_now_add': 'True', 'blank': 'True'}),
             'date': ('django.db.models.fields.DateField', [], {'db_index': 'True'}),
@@ -151,19 +151,9 @@ class Migration(SchemaMigration):
             'id': ('django.db.models.fields.AutoField', [], {'primary_key': 'True'}),
             'modified': ('django.db.models.fields.DateTimeField', [], {'auto_now': 'True', 'auto_now_add': 'True', 'blank': 'True'}),
             'number': ('django.db.models.fields.CharField', [], {'unique': 'True', 'max_length': '50'}),
-            'product': ('django.db.models.fields.related.ManyToManyField', [], {'to': "orm['itserv.Product']", 'through': "orm['itserv.CRequest']", 'symmetrical': 'False'}),
             'total_all': ('django.db.models.fields.FloatField', [], {'default': '0'}),
             'total_disc': ('django.db.models.fields.FloatField', [], {'default': '0'}),
             'user': ('django.db.models.fields.related.ForeignKey', [], {'to': "orm['auth.User']"})
-        },
-        'itserv.crequest': {
-            'Meta': {'object_name': 'CRequest'},
-            'contract': ('django.db.models.fields.related.ForeignKey', [], {'to': "orm['itserv.Contract']", 'null': 'True', 'blank': 'True'}),
-            'created': ('django.db.models.fields.DateTimeField', [], {'auto_now_add': 'True', 'blank': 'True'}),
-            'id': ('django.db.models.fields.AutoField', [], {'primary_key': 'True'}),
-            'modified': ('django.db.models.fields.DateTimeField', [], {'auto_now': 'True', 'auto_now_add': 'True', 'blank': 'True'}),
-            'number': ('django.db.models.fields.PositiveIntegerField', [], {'default': '1'}),
-            'product': ('django.db.models.fields.related.ForeignKey', [], {'to': "orm['itserv.Product']"})
         },
         'itserv.product': {
             'Meta': {'ordering': "['service', 'name']", 'object_name': 'Product'},
@@ -187,6 +177,17 @@ class Migration(SchemaMigration):
             'name': ('django.db.models.fields.CharField', [], {'max_length': '127', 'db_index': 'True'}),
             'phone': ('django.db.models.fields.CharField', [], {'max_length': '15'}),
             'site': ('django.db.models.fields.URLField', [], {'max_length': '255', 'null': 'True', 'blank': 'True'})
+        },
+        'itserv.reqlist': {
+            'Meta': {'ordering': "['contract', 'client__name', 'producnt__servise', 'product__name', 'created']", 'object_name': 'Reqlist'},
+            'client': ('django.db.models.fields.related.ForeignKey', [], {'to': "orm['itserv.Client']"}),
+            'contract': ('django.db.models.fields.related.ForeignKey', [], {'to': "orm['itserv.Contract']", 'null': 'True', 'blank': 'True'}),
+            'created': ('django.db.models.fields.DateTimeField', [], {'auto_now_add': 'True', 'blank': 'True'}),
+            'id': ('django.db.models.fields.AutoField', [], {'primary_key': 'True'}),
+            'modified': ('django.db.models.fields.DateTimeField', [], {'auto_now': 'True', 'auto_now_add': 'True', 'blank': 'True'}),
+            'number': ('django.db.models.fields.PositiveIntegerField', [], {'default': '1'}),
+            'price': ('django.db.models.fields.FloatField', [], {'null': 'True', 'blank': 'True'}),
+            'product': ('django.db.models.fields.related.ForeignKey', [], {'to': "orm['itserv.Product']"})
         }
     }
 
