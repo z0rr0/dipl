@@ -2,7 +2,7 @@
 from django.db import models
 from django.contrib.auth.models import User
 
-# Sotrudnik = User
+# Для сотрудников используется стандартная модель User
 
 class Client(models.Model):
     u"""

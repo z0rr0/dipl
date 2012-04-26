@@ -1,0 +1,30 @@
+{% extends "other.html" %}
+{% load url from future %}
+{% block title %}Авторизация{% endblock %}
+
+{% block content %}
+<div class="row-fluid">
+    <div class="span4">&nbsp;</div>
+    <div class="span4">
+        <h1>Авторизация</h1>
+        <form method="post" action="{% url 'django.contrib.auth.views.login' %}" class="well form-inline">
+            {% csrf_token %}
+            <input type="text" name="username" id="username" class="input-small" placeholder="Имя...">
+            <input type="password" name="password" id="password" class="input-small" placeholder="Пароль...">
+            <!--     <label class="checkbox">
+                    <input type="checkbox"> запомнить меня
+                </label> 
+            -->
+            <button type="submit" class="btn">Войти</button>
+            <input type="hidden" name="next" value="{{ next|escape }}" />
+        </form>
+        {% if form.errors %}
+            <div class="alert alert-error">
+                <a class="close" data-dismiss="alert">×</a>
+                <h4 class="alert-heading">Ошибка!</h4>
+                неверное имя или пароль
+            </div>
+        {% endif %}
+    </div>
+</div>
+{% endblock %}

@@ -1,0 +1,79 @@
+<!DOCTYPE html>
+<html lang="ru">
+    <head>
+        <meta http-equiv="Content-Type" content="text/html; charset=utf-8"/> 
+        <meta http-equiv="Content-Language" content="ru"/> 
+        {% block addmeta %}{% endblock %}
+        <link rel="stylesheet" href="{{ MEDIA_URL }}bootstrap/css/bootstrap.min.css" type="text/css" />
+        <link rel="stylesheet" href="{{ MEDIA_URL }}bootstrap/css/bootstrap-responsive.min.css" type="text/css" />
+        <link rel="stylesheet" href="{{ MEDIA_URL }}css/main.css" type="text/css" />
+        <script type="text/javascript" src="{{ MEDIA_URL }}js/jquery-1.7.2.min.js"></script>
+        <script type="text/javascript" src="{{ MEDIA_URL }}bootstrap/js/bootstrap.min.js"></script>
+        {% block addjscss %}{% endblock addjscss %}
+        <script type="text/javascript" src="{{ MEDIA_URL }}js/main.js"></script> 
+        <title>ITСервис - {% block title %}{% endblock %}</title>
+    </head>
+    <body>
+        {% block pagejs %}{% endblock pagejs %}
+        <div class="navbar navbar-fixed-top">
+          <div class="navbar-inner">
+            <div class="container-fluid">
+              <a class="btn btn-navbar" data-toggle="collapse" data-target=".nav-collapse">
+                <span class="icon-bar"></span>
+                <span class="icon-bar"></span>
+                <span class="icon-bar"></span>
+              </a>
+              <a class="brand" href="/">ITСервис</a>
+              <div class="nav-collapse">
+                <ul class="nav">
+                  <li class="active"><a href="/"><i class="icon-home icon-white"></i>
+                    Главная</a></li>
+                  <li><a href="#contact"><i class="icon-envelope icon-white"></i>
+                    Контакты</a></li>
+                </ul>
+                    <form class="navbar-form pull-left" method="POST" action="/#">
+                        {% csrf_token %}{{ form.management_form }}
+                        <i class="icon-search icon-white"></i>
+                        <input type="text" class="span3" name="progsearch" placeholder="Поиск по договору или клиенту...">
+                    </form>
+                <p class="navbar-text pull-right">
+                    {% if user.is_authenticated %}
+                        <i class="icon-user icon-white"></i>
+                        Вы вошли как <a href="/accounts/logout/"  title="Выйти">{{ user.first_name  }}</a>
+                    {% else %}
+                        <a href="/accounts/login/" title="Выполнить вход">
+                          Вы не авторизованы</a>
+                    {% endif %}
+                </p>
+              </div>
+            </div>
+          </div>
+        </div>    
+        <div class="container-fluid">
+          <div class="row-fluid">
+            <div class="span3">
+              <div class="well sidebar-nav">
+                <ul class="nav nav-list">
+                  <li class="nav-header">Товары</li>
+                  <!-- <li class="active"><a href="#">Link</a></li> -->
+                  <li><a href="/#">Поставщики</a></li>
+                  <li><a href="/#">Товары</a></li>
+                  <li><a href="/#">Услуги</a></li>
+                  <li class="nav-header">Обрабока заказов</li>
+                  <li><a href="/#">Клиенты</a></li>
+                  <li><a href="/#">Заявки</a></li>
+                  <li><a href="/#">Контракты</a></li>
+                </ul>
+              </div>
+            </div>
+            <div class="span9">
+                {% block content %}{% endblock %}
+            </div>
+          </div>     
+        <hr>
+        <footer>
+            <p>&copy; ITСервис Corporation</p>
+        </footer>
+    </div>
+    </body>
+</html>

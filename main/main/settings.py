@@ -1,3 +1,4 @@
+#-*- coding: utf-8 -*-
 # Django settings for main project.
 
 import socket, os
@@ -108,6 +109,9 @@ MIDDLEWARE_CLASSES = (
     'django.contrib.sessions.middleware.SessionMiddleware',
     'django.middleware.csrf.CsrfViewMiddleware',
     'django.contrib.auth.middleware.AuthenticationMiddleware',
+    'django.middleware.locale.LocaleMiddleware',
+    'django.middleware.transaction.TransactionMiddleware',
+    'django.contrib.flatpages.middleware.FlatpageFallbackMiddleware',
     'django.contrib.messages.middleware.MessageMiddleware',
     # Uncomment the next line for simple clickjacking protection:
     # 'django.middleware.clickjacking.XFrameOptionsMiddleware',
@@ -123,6 +127,9 @@ TEMPLATE_DIRS = (
     # Always use forward slashes, even on Windows.
     # Don't forget to use absolute paths, not relative paths.
 )
+
+for root, dirs, files in os.walk(PROJECT_PATH):
+    if 'templates' in dirs: TEMPLATE_DIRS += (os.path.join(root, 'templates'),)
 
 INSTALLED_APPS = (
     'django.contrib.auth',
@@ -204,6 +211,8 @@ CACHES = {
         'LOCATION': '127.0.0.1:11211',
     }
 }
+
+FIRM = u"ITСервис"
 
 # rewrite global setting vars
 try:

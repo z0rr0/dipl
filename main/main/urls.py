@@ -6,7 +6,12 @@ from django.conf import settings
 from django.contrib import admin
 admin.autodiscover()
 
+from django.contrib.auth.views import login, logout
+
 urlpatterns = patterns('',
+    # accounts
+    (r'^accounts/login/$', login),
+    (r'^accounts/logout/$' , logout),
     # Examples:
     # url(r'^$', 'main.views.home', name='home'),
     # url(r'^main/', include('main.foo.urls')),
@@ -16,6 +21,9 @@ urlpatterns = patterns('',
 
     # Uncomment the next line to enable the admin:
     url(r'^admin/', include(admin.site.urls)),
+
+    # index page
+    url(r'^$', 'itserv.views.index', {'vtemplate': 'index.html'}),
 )
 
 # media content                   
