@@ -3,18 +3,14 @@
     <head>
         <meta http-equiv="Content-Type" content="text/html; charset=utf-8"/> 
         <meta http-equiv="Content-Language" content="ru"/> 
-        {% block addmeta %}{% endblock %}
         <link rel="stylesheet" href="{{ MEDIA_URL }}bootstrap/css/bootstrap.min.css" type="text/css" />
         <link rel="stylesheet" href="{{ MEDIA_URL }}bootstrap/css/bootstrap-responsive.min.css" type="text/css" />
         <link rel="stylesheet" href="{{ MEDIA_URL }}css/main.css" type="text/css" />
-        <script type="text/javascript" src="{{ MEDIA_URL }}js/jquery-1.7.2.min.js"></script>
         <script type="text/javascript" src="{{ MEDIA_URL }}bootstrap/js/bootstrap.min.js"></script>
         {% block addjscss %}{% endblock addjscss %}
-        <script type="text/javascript" src="{{ MEDIA_URL }}js/main.js"></script> 
         <title>ITСервис - {{ flatpage.title }}</title>
     </head>
     <body>
-        {% block pagejs %}{% endblock pagejs %}
         <div class="navbar navbar-fixed-top">
           <div class="navbar-inner">
             <div class="container-fluid">

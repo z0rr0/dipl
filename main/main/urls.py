@@ -26,8 +26,7 @@ urlpatterns = patterns('',
     # главная страница
     url(r'^$', 'itserv.views.index', {'vtemplate': 'index.html'}),
 
-    # поставщики
-    # полный список
+    # поставщики - полный список
     url(r'^providers/$', 'itserv.views.obj_all', {
         'vtemplate': 'provider_home.html',
         'model': Provider
@@ -43,6 +42,11 @@ urlpatterns = patterns('',
     # добавление данных о поставщике
     (r'^provider/add/?$', 'itserv.views.provider_add', {
         'vtemplate': 'provider_edit.html'}),
+
+    # товары
+    url(r'^products/$', 'itserv.views.product_all', {
+        'vtemplate': 'product_home.html',
+        }),
 )
 
 # media content                   

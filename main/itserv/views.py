@@ -87,3 +87,20 @@ def provider_add(request, vtemplate):
     if saved:
         return redirect('/providers/')
     return TemplateResponse(request, vtemplate, {'form': form, 'action': u'Добавление'})
+
+@login_required
+def product_all(request, vtemplate):
+    u""" 
+    Список товаров
+    """
+    first = Provider.objects.all()[0]
+    first = first.id
+    try:
+        if 'provider' in request.GET:
+            provider = int(request.GET['provider'])
+        else:
+            provider = first
+    except (KeyError, ValueError) as err:
+        provider = first
+    form = ProviderSelectForm(initial={'provider': provider})    
+    return TemplateResponse(request, vtemplate, {'form': form})

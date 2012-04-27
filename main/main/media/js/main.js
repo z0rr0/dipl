@@ -37,4 +37,24 @@ $(document).ajaxSend(function(event, xhr, settings) {
         xhr.setRequestHeader("X-CSRFToken", getCookie('csrftoken'));
     }
 });
-
+function product_search() {
+    var_provider = $('#id_provider').val();
+    var_search = $('#id_search').val();
+    $.ajax({
+        url: '/product/search/',
+        type: 'POST',
+        data: {
+            provider: var_provider,
+            search : var_search,
+        },
+        dataType: 'html',
+        context: document.body,
+        success: function (data) {
+            $('#product_list').html(data);
+        },
+        error: function () {
+            message = "<p>Ошибка обработки данных.</p>";
+            $('#product_list').html(message);
+        },
+    });
+}

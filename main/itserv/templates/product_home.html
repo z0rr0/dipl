@@ -1,0 +1,29 @@
+{% extends "base.html" %}
+{% block title %}Поставщики{% endblock %}
+
+{% block pagejs %}
+<script type="text/javascript">
+$(document).ready(function() {
+    alert("of");
+})
+</script>
+{% endblock %}
+
+{% block content %}
+    <h1>Список товаров</h1>
+    <div class="row-fluid">
+        <div class="span12">
+            <form class="well form-search" method="POST" action="javascript:product_search()">
+                {% csrf_token %}{{ form.management_form }}
+                <label for="id_provider">{{ form.provider.label }}</label>
+                {{ form.provider }}
+                <input type="text" id="id_search" class="input-medium search-query"
+                    name="progsearch" placeholder="название..." value="{{ searchtext }}">
+                <button type="submit" class="btn">Поиск</button>
+            </form>
+        </div>
+    </div>
+    <div class="row-fluid">
+        <div id="product_list"></div>
+    </div>
+{% endblock content %}
