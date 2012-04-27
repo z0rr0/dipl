@@ -11,7 +11,7 @@
         <script type="text/javascript" src="{{ MEDIA_URL }}bootstrap/js/bootstrap.min.js"></script>
         {% block addjscss %}{% endblock addjscss %}
         <script type="text/javascript" src="{{ MEDIA_URL }}js/main.js"></script> 
-        <title>ITСервис - {% block title %}{% endblock %}</title>
+        <title>ITСервис - {{ flatpage.title }}</title>
     </head>
     <body>
         {% block pagejs %}{% endblock pagejs %}
@@ -28,7 +28,7 @@
                 <ul class="nav">
                   <li class="active"><a href="/"><i class="icon-home icon-white"></i>
                     Главная</a></li>
-                  <li><a href="/about/contact/"><i class="icon-envelope icon-white"></i>
+                  <li><a href="#contact"><i class="icon-envelope icon-white"></i>
                     Контакты</a></li>
                 </ul>
                     <form class="navbar-form pull-left" method="POST" action="/#">
@@ -68,7 +68,7 @@
             </div>
             <div class="span10">
               <div class="container-fluid">
-                {% block content %}{% endblock %}
+                {{ flatpage.content|safe }}
               </div>
             </div>
           </div>     
