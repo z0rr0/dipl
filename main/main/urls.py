@@ -47,6 +47,21 @@ urlpatterns = patterns('',
     url(r'^products/$', 'itserv.views.product_all', {
         'vtemplate': 'product_home.html',
         }),
+    # поиск товаров
+    url(r'^product/search/$', 'itserv.views.product_search', {
+        'vtemplate': 'product_search.html',
+        }),
+    # удаление товара
+    (r'^product/delete/(?P<id>\d+)/?$', 'itserv.views.obj_delete', {
+        'redirecturl': '/products/',
+        'model': Product, 
+        'perm': 'itserv.delete_product'}),
+    (r'^product/ajdel/(?P<id>\d+)/?$', 'itserv.views.obj_delete_ajax', {
+        'model': Product,
+        'perm': 'itserv.delete_product'}),
+    # редактирование данных о товаре
+    (r'^product/edit/(?P<id>\d+)/?$', 'itserv.views.product_edit', {
+        'vtemplate': 'product_edit.html'}),
 )
 
 # media content                   

@@ -51,10 +51,10 @@ class Product(models.Model):
     Товары и услуги
     """
     provider = models.ForeignKey(Provider, verbose_name = u'поставщик', blank=True, null=True, on_delete=models.SET_NULL, help_text=u'поставщик товара')
-    name = models.CharField(max_length=127, verbose_name=u'наименование', unique = True)
-    service = models.BooleanField(verbose_name = u'услуга', default = False, help_text = u'является услугой', db_index=True)
-    price = models.FloatField(default=0, verbose_name=u'цена', help_text=u'цена торара/услуги за единицу')
-    rest = models.PositiveIntegerField(default=0, verbose_name=u'остаток', help_text=u'количество товара в наличии', db_index=True)
+    name = models.CharField(max_length=127, verbose_name=u'наименование', unique = True, help_text=u'название торва или услуги')
+    service = models.BooleanField(verbose_name = u'услуга', default = False, help_text = u'является услугой, а не товаром', db_index=True)
+    price = models.FloatField(default=0, verbose_name=u'цена', help_text=u'цена за единицу торара/услуги')
+    rest = models.PositiveIntegerField(default=0, verbose_name=u'остаток', help_text=u'количество в наличии', db_index=True)
     comment = models.TextField(verbose_name=u'примечание', blank=True, null=True)
     modified = models.DateTimeField(auto_now=True, auto_now_add=True, editable=False, help_text=u'дата редактирования объекта')
     created = models.DateTimeField(auto_now_add=True, editable=False, help_text=u'дата создания объекта')

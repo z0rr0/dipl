@@ -1,16 +1,17 @@
 {% extends "base.html" %}
-{% block title %}Поставщики{% endblock %}
+{% block title %}Товары и услуги{% endblock %}
 
 {% block pagejs %}
 <script type="text/javascript">
 $(document).ready(function() {
-    alert("of");
+    product_search();
+    $('#id_provider').change(product_search);
 })
 </script>
 {% endblock %}
 
 {% block content %}
-    <h1>Список товаров</h1>
+    <h1>Список товаров и услуг</h1>
     <div class="row-fluid">
         <div class="span12">
             <form class="well form-search" method="POST" action="javascript:product_search()">
@@ -18,12 +19,18 @@ $(document).ready(function() {
                 <label for="id_provider">{{ form.provider.label }}</label>
                 {{ form.provider }}
                 <input type="text" id="id_search" class="input-medium search-query"
-                    name="progsearch" placeholder="название..." value="{{ searchtext }}">
-                <button type="submit" class="btn">Поиск</button>
+                    name="progsearch" placeholder="название, примечание..." value="{{ searchtext }}">
+                <label class="checkbox">
+                    {{ form.onlyservice }} {{ form.onlyservice.label }}
+                </label>
+                <button type="submit" class="btn">
+                    <i class="icon-search"></i>
+                    Поиск
+                </button>
             </form>
         </div>
     </div>
     <div class="row-fluid">
-        <div id="product_list"></div>
+        <div class="container-fluid" id="product_list"></div>
     </div>
 {% endblock content %}

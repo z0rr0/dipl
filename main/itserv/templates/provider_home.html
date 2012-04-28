@@ -26,7 +26,7 @@
                 {% for prov in objlist %}
                     <tr>
                         <td>{{ forloop.counter }}</td>
-                        <td>{{ prov.name }}</td>
+                        <td><a href="/products/?provider={{ prov.id }}" title="Перейти к товарам поставщика">{{ prov.name }}</a></td>
                         <td>{{ prov.phone }}</td>
                         <td>{{ prov.email|urlizetrunc:18 }}</td>
                         <td>{{ prov.address }}</td>

@@ -38,14 +38,18 @@ $(document).ajaxSend(function(event, xhr, settings) {
     }
 });
 function product_search() {
+    $('#product_list').html('<p>Пожалуйста подождите, идет поиск...</p>');
     var_provider = $('#id_provider').val();
     var_search = $('#id_search').val();
+    if ($('#id_onlyservice').is(':checked')) var_onlyserv = 1;
+    else var_onlyserv = 0;
     $.ajax({
         url: '/product/search/',
         type: 'POST',
         data: {
             provider: var_provider,
             search : var_search,
+            onlyservice: var_onlyserv
         },
         dataType: 'html',
         context: document.body,
@@ -57,4 +61,14 @@ function product_search() {
             $('#product_list').html(message);
         },
     });
+}
+// delete product record
+function delete_product(id) {
+    if (confirm("Уверены, что хотите удалить данные?"))
+        $.get('/product/ajdel/' + id, function(data) {
+                product_search();
+            }).error(function() { 
+                error_msg = "Ошибка обработки данных. Возможно у Вас не хватает прав или нет соединения с сервером.";
+                alert(error_msg);
+            });
 }

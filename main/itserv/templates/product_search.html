@@ -1,0 +1,55 @@
+{% block content %}
+{% if products %}
+    <div class="row-fluid">
+        <div class="span3">
+            <strong>Название</strong>
+        </div>
+        <div class="span2">
+            <strong>Цена</strong>
+        </div>
+        <div class="span2">
+            <strong>Остаток</strong>
+        </div>
+        <div class="span3">
+            <strong>Примечание</strong>
+        </div>
+        <div class="span1">
+            <!-- <strong>управление</strong> -->
+        </div>
+    </div>
+    <hr />
+    {% for product in products %}
+        <div class="row-fluid">
+            <div class="span3">
+                {{ product.name }}
+                {% if product.service %}
+                    <i class="icon-flag"></i>
+                {% endif %}
+            </div>
+            <div class="span2">
+                {{ product.price }} руб.
+            </div>
+            <div class="span2">
+                {{ product.rest }} шт.
+            </div>
+            <div class="span3">
+                {{ product.comment }}&nbsp;
+            </div>
+            <div class="span2">
+                <a class="btn btn-info" href="javascript:alert('ok')" title="Быстрая правка">
+                    <i class="icon-refresh icon-white"></i>
+                </a>
+                <a class="btn btn-primary" href="/product/edit/{{ product.id }}" title="Правка">
+                    <i class="icon-pencil icon-white"></i>
+                </a>
+                <a class="btn btn-danger" href="javascript:delete_product({{ product.id }})" title="Удаление">
+                    <i class="icon-trash icon-white"></i>
+                </a>
+            </div>
+        </div><br />
+    {% endfor %}
+{% else %}    
+    <p>По указанным условиям поиска данные отсутствуют.</p>
+{% endif %}
+
+{% endblock content %}

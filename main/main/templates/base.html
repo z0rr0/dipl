@@ -9,8 +9,8 @@
         <link rel="stylesheet" href="{{ MEDIA_URL }}css/main.css" type="text/css" />
         <script type="text/javascript" src="{{ MEDIA_URL }}js/jquery-1.7.2.min.js"></script>
         <script type="text/javascript" src="{{ MEDIA_URL }}bootstrap/js/bootstrap.min.js"></script>
+        <script type="text/javascript" src="{{ MEDIA_URL }}js/main.js"></script>
         {% block addjscss %}{% endblock addjscss %}
-        <script type="text/javascript" src="{{ MEDIA_URL }}js/main.js"></script> 
         <title>ITСервис - {% block title %}{% endblock %}</title>
     </head>
     <body>
@@ -57,8 +57,8 @@
                   <li class="nav-header">Товары</li>
                   <!-- <li class="active"><a href="#">Link</a></li> -->
                   <li><a href="/providers/">Поставщики</a></li>
-                  <li><a href="/#">Товары</a></li>
-                  <li><a href="/#">Услуги</a></li>
+                  <li><a href="/products/">Товары</a></li>
+                  <li><a href="/products/?provider=0&service=1">Услуги</a></li>
                   <li class="nav-header">Обрабока заказов</li>
                   <li><a href="/#">Клиенты</a></li>
                   <li><a href="/#">Заявки</a></li>

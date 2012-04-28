@@ -16,6 +16,16 @@ import logging
 # Get an instance of a logger
 logger = logging.getLogger(__name__)
 
+# --------- ADD FUNTIONS -------------
+# decorator for ajax login
+def login_required_ajax404(fn):
+    def wrapper(*args, **kwargs):
+        if args[0].user.is_authenticated():
+            return fn(*args, **kwargs)
+        else:
+            return HttpResponseNotFound('Auth error')
+    return wrapper
+
 # --------- MAIN FUNTIONS -------------
 @login_required
 def index(request, vtemplate):
@@ -47,6 +57,21 @@ def obj_delete(request, id, redirecturl, model, perm):
     else:
         to_url = '/accounts/login/?next=%s' % request.path
     return HttpResponseRedirect(to_url)
+
+@login_required_ajax404
+@transaction.autocommit
+def obj_delete_ajax(request, id, model, perm):
+    u""" 
+    Удалении данных об объекте в Ajax запросе
+    """
+    status = 'ERROR'
+    if request.user.has_perm(perm):
+        obj = get_object_or_404(model, pk=int(id))
+        obj.delete()
+        status = 'OK'
+    else:
+        return HttpResponseNotFound('Error delete')
+    return HttpResponse(status)
 
 def get_obj_form(request, setobrj, SetForm):
     u"""
@@ -95,12 +120,61 @@ def product_all(request, vtemplate):
     """
     first = Provider.objects.all()[0]
     first = first.id
+    onlyservice = False
     try:
         if 'provider' in request.GET:
             provider = int(request.GET['provider'])
         else:
             provider = first
+        if 'service' in request.GET:
+            onlyservice = bool(int(request.GET['service']))
     except (KeyError, ValueError) as err:
         provider = first
-    form = ProviderSelectForm(initial={'provider': provider})    
+    form = ProviderSelectForm(initial={'provider': provider, 'onlyservice': onlyservice})    
     return TemplateResponse(request, vtemplate, {'form': form})
+
+@login_required_ajax404
+def product_search(request, vtemplate):
+    u"""
+    поиск товаров и/или услуг по базовым критериям
+    """
+    products = Product.objects.all()
+    try:
+        if request.method == 'POST':
+            prov = int(request.POST['provider'])
+            if prov:
+                products = products.filter(provider=prov)
+            service = int(request.POST['onlyservice'])
+            if service:
+                products = products.filter(service=True)
+            search = request.POST['search']
+            if search:
+                products = products.filter(Q(name__icontains=search) | Q(comment__icontains=search))
+    except (KeyError, ValueError) as err:
+        logger.info(err)
+    return TemplateResponse(request, vtemplate, {'products': products})
+
+permission_required('itserv.change_product')
+def product_edit(request, id, vtemplate):
+    u""" 
+    Редактирование данных о поставщике 
+    """
+    c = {}
+    c.update(csrf(request))
+    product = get_object_or_404(Product, id=int(id))
+    form, product, saved = get_obj_form(request, product, ProductForm)
+    if saved:
+        return redirect('/products/?provider=' + str(product.provider.id))
+    return TemplateResponse(request, vtemplate, {'form': form, 'action': u'Редактирование'})
+
+permission_required('itserv.add_product')
+def product_add(request, vtemplate):
+    u""" 
+    Редактирование данных о поставщике 
+    """
+    c = {}
+    c.update(csrf(request))
+    form, product, saved = get_obj_form(request, None, ProductForm)
+    if saved:
+        return redirect('/products/?provider=' + str(product.provider.id))
+    return TemplateResponse(request, vtemplate, {'form': form, 'action': u'Добавление'})
