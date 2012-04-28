@@ -12,9 +12,11 @@ from itserv.models import *
 from itserv.forms import *
 
 # import the logging library
-import logging
+import logging, math
 # Get an instance of a logger
 logger = logging.getLogger(__name__)
+
+PAGE_COUNT = 10.0
 
 # --------- ADD FUNTIONS -------------
 # decorator for ajax login
@@ -118,8 +120,9 @@ def product_all(request, vtemplate):
     u""" 
     Список товаров
     """
-    first = Provider.objects.all()[0]
-    first = first.id
+    # first = Provider.objects.all()[0]
+    # first = first.id
+    first = 0
     onlyservice = False
     try:
         if 'provider' in request.GET:
@@ -129,7 +132,7 @@ def product_all(request, vtemplate):
         if 'service' in request.GET:
             onlyservice = bool(int(request.GET['service']))
     except (KeyError, ValueError) as err:
-        provider = first
+        provider = 0
     form = ProviderSelectForm(initial={'provider': provider, 'onlyservice': onlyservice})    
     return TemplateResponse(request, vtemplate, {'form': form})
 
@@ -139,6 +142,7 @@ def product_search(request, vtemplate):
     поиск товаров и/или услуг по базовым критериям
     """
     products = Product.objects.all()
+    page = 1
     try:
         if request.method == 'POST':
             prov = int(request.POST['provider'])
@@ -150,9 +154,19 @@ def product_search(request, vtemplate):
             search = request.POST['search']
             if search:
                 products = products.filter(Q(name__icontains=search) | Q(comment__icontains=search))
+        # количество страниц
+        pagec = int(math.ceil(products.count()/PAGE_COUNT))
+        pagec = 1 if pagec < 1 else pagec
+        allpage = range(1, pagec + 1)
+        if 'page' in request.GET:
+            page = int(request.GET['page'])
+            page = 1 if page < 2 else page
+            page = pagec if page > pagec else page
+        products = products[(page-1)*PAGE_COUNT:page*PAGE_COUNT]
     except (KeyError, ValueError) as err:
         logger.info(err)
-    return TemplateResponse(request, vtemplate, {'products': products})
+    return TemplateResponse(request, vtemplate, {'products': products, 
+        'page': page, 'allpage': allpage, 'pagec': pagec})
 
 permission_required('itserv.change_product')
 def product_edit(request, id, vtemplate):

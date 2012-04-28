@@ -45,12 +45,10 @@ urlpatterns = patterns('',
 
     # товары
     url(r'^products/$', 'itserv.views.product_all', {
-        'vtemplate': 'product_home.html',
-        }),
+        'vtemplate': 'product_home.html'}),
     # поиск товаров
     url(r'^product/search/$', 'itserv.views.product_search', {
-        'vtemplate': 'product_search.html',
-        }),
+        'vtemplate': 'product_search.html'}),
     # удаление товара
     (r'^product/delete/(?P<id>\d+)/?$', 'itserv.views.obj_delete', {
         'redirecturl': '/products/',

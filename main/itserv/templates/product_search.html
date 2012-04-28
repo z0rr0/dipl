@@ -1,5 +1,24 @@
 {% block content %}
 {% if products %}
+    {% if pagec > 1 %}
+        <div class="pagination pagination-centered">
+            <ul>
+                <li><a href="javascript:product_search({{ page|add:-1 }})">&laquo;</a></li>
+                {% for p in allpage %}
+                    {% if p == page %}
+                        <li class="active">
+                            <a href="#">{{ p }}</a>
+                        </li>
+                    {% else %}
+                        <li>
+                            <a href="javascript:product_search({{ p }})">{{ p }}</a>
+                        </li>
+                    {% endif %}
+                {% endfor %}
+                <li><a href="javascript:product_search({{ page|add:1 }})">&raquo;</a></li>
+            </ul>
+        </div>
+    {% endif %}
     <div class="row-fluid">
         <div class="span3">
             <strong>Название</strong>
@@ -33,7 +52,7 @@
                 {{ product.rest }} шт.
             </div>
             <div class="span3">
-                {{ product.comment }}&nbsp;
+                {{ product.comment|default:"" }}&nbsp;
             </div>
             <div class="span2">
                 <a class="btn btn-info" href="javascript:alert('ok')" title="Быстрая правка">

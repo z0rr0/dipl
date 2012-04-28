@@ -4,8 +4,10 @@
 {% block pagejs %}
 <script type="text/javascript">
 $(document).ready(function() {
-    product_search();
-    $('#id_provider').change(product_search);
+    product_search(1);
+    $('#id_provider').change(function() {
+        product_search(1);
+    });
 })
 </script>
 {% endblock %}

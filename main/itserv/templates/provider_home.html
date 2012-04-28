@@ -30,8 +30,8 @@
                         <td>{{ prov.phone }}</td>
                         <td>{{ prov.email|urlizetrunc:18 }}</td>
                         <td>{{ prov.address }}</td>
-                        <td>{{ prov.site|urlizetrunc:18 }}</td>
-                        <td>{{ prov.comment }}</td>
+                        <td>{{ prov.site|default:""|urlizetrunc:18 }}</td>
+                        <td>{{ prov.comment|default:"" }}</td>
                         <td>
                             <a class="btn btn-primary" href="/provider/edit/{{ prov.id }}" title="Правка">
                                 <i class="icon-pencil icon-white"></i>
