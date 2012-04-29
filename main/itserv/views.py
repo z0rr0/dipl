@@ -16,7 +16,7 @@ import logging, math
 # Get an instance of a logger
 logger = logging.getLogger(__name__)
 
-PAGE_COUNT = 10.0
+PAGE_COUNT = 10
 
 # --------- ADD FUNTIONS -------------
 # decorator for ajax login
@@ -136,6 +136,24 @@ def product_all(request, vtemplate):
     form = ProviderSelectForm(initial={'provider': provider, 'onlyservice': onlyservice})    
     return TemplateResponse(request, vtemplate, {'form': form})
 
+def pagination_info(objs, onpage, page):
+    u"""
+    Возвращает переменные для постраничного просмотра
+    """
+    countobj = objs.count()
+    # количество страниц, это число >=1
+    pagec = math.ceil(countobj/float(onpage))
+    pagec = 1 if pagec < 1 else pagec
+    # итератор для страниц
+    allpage = range(1, int(pagec + 1))
+    # текущая страница не должна выходить за границы
+    if page < 1:
+        page = 1
+    elif page > pagec:
+        page = pagec
+    getobj = objs[(page-1)*onpage:page*onpage]
+    return getobj, allpage, pagec, page
+
 @login_required_ajax404
 def product_search(request, vtemplate):
     u"""
@@ -154,19 +172,14 @@ def product_search(request, vtemplate):
             search = request.POST['search']
             if search:
                 products = products.filter(Q(name__icontains=search) | Q(comment__icontains=search))
-        # количество страниц
-        pagec = int(math.ceil(products.count()/PAGE_COUNT))
-        pagec = 1 if pagec < 1 else pagec
-        allpage = range(1, pagec + 1)
         if 'page' in request.GET:
             page = int(request.GET['page'])
-            page = 1 if page < 2 else page
-            page = pagec if page > pagec else page
-        products = products[(page-1)*PAGE_COUNT:page*PAGE_COUNT]
+        # постраничный просмотр
+        products, iter_page, count_page, page = pagination_info(products, PAGE_COUNT, page)
     except (KeyError, ValueError) as err:
         logger.info(err)
     return TemplateResponse(request, vtemplate, {'products': products, 
-        'page': page, 'allpage': allpage, 'pagec': pagec})
+        'page': page, 'allpage': iter_page, 'pagec': count_page})
 
 permission_required('itserv.change_product')
 def product_edit(request, id, vtemplate):
