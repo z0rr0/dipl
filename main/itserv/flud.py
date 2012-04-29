@@ -35,6 +35,7 @@ def flud_provider(obj_count=50):
                 address=u'почтовый адрес',
                 phone='8-(831)-47-455-66',
                 email='test@asi.ru',
+                comment=u"создано автоматически",
                 modified=for_one_date,
                 created=for_one_date,
             )
@@ -66,6 +67,7 @@ def flud_product(obj_count=50, service=False):
                 service=service,
                 price=get_price(1000, 10000),
                 rest=def_rest,
+                comment=u"создано автоматически",
                 modified=for_one_date,
                 created=for_one_date,
             )

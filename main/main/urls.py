@@ -69,6 +69,9 @@ urlpatterns = patterns('',
     # редактирование только основных данных о товаре
     (r'^product/smalledit/(?P<id>\d+)/?$', 'itserv.views.product_smalledit', {
         'vtemplate': 'product_smalledit.html'}),
+    # просмотр основных данных о товаре
+    (r'^product/smallview/(?P<id>\d+)/?$', 'itserv.views.product_smallview', {
+        'vtemplate': 'product_smallview.html'}),
 )
 
 # media content                   

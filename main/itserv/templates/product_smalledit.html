@@ -1,22 +1,40 @@
 {% load widget_tweaks %}
+{% load itags %}
 <div class="span10">
-    <form class="form-inline" method="POST" action="">
+    <form class="form-inline" action="javascript:smalledit_save({{ product.id }}, {{ page }})">
         {% csrf_token %}{{ form.management_form }}
-        {{ form.name }}
+        {{ form.name|add_class:"span3" }}
         {{ form.price|add_class:"input-small" }}
         {{ form.rest|add_class:"input-small" }}
-        {{ form.comment }}
+        {{ form.comment|add_class:"span3" }}
         <label class="checkbox">
             {{ form.service }} услуга
         </label>
-    </form>    
-
+    </form>
+    {% if form.errors %}
+        <div class="alert alert-error">
+            <a class="close" data-dismiss="alert">×</a>
+            <h4 class="alert-heading">Ошибка!</h4>
+            Пожалуйста проверьте указаные данные:
+            <em>
+                {% if form.name.errors %}
+                    название должно быть уникальным;
+                {% endif %}
+                {% if form.price.errors %}
+                    цена - обязательное поле вещественного типа;
+                {% endif %}
+                {% if form.rest.errors %}
+                    остаток - обязательное поле целого типа;
+                {% endif %}
+            </em>
+        </div>
+    {% endif %}
 </div>
 <div class="span2">
-    <a class="btn btn-success" href="javascript:smalledit({{ product.id }})" title="Сохранение">
+    <a class="btn btn-success" href="javascript:smalledit_save({{ product.id }}, {{ page }})" title="Сохранение">
         <i class="icon-ok-sign icon-white"></i>
     </a>
-    <a class="btn btn-inverse" href="javascript:product_search({{ page }})" title="Отмена изменений">
+    <a class="btn btn-inverse" href="javascript:smalledit_cancel({{ product.id }}, {{ page }})" title="Отмена изменений">
         <i class="icon-remove-sign icon-white"></i>
     </a>
     <a class="btn btn-danger" href="javascript:delete_product({{ product.id }})" title="Удаление">

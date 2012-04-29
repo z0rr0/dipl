@@ -236,11 +236,35 @@ def product_smalledit(request, id, vtemplate):
     # Быстрое редактирование товара
     if request.user.has_perm('itserv.change_product'):
         product = get_object_or_404(Product, pk=int(id))
-        form, product, saved = get_obj_form(request, product, ProductSmallForm)
+        if request.method == 'POST':
+            status = 0
+            try:
+                form = ProductSmallForm(request.POST, instance=product, auto_id='id_' + str(product.id) + '_%s')
+                if form.is_valid():
+                    form.save()
+                    status = 1
+            except:
+                pass
+            if status:
+                return HttpResponse(str(status))
+        else:
+            form = ProductSmallForm(instance=product, auto_id='id_' + str(product.id) + '_%s')
         if 'page' in request.GET:
             page = request.GET['page']
         else:
             page = 1
     else:
         return HttpResponseNotFound('Error search object')
-    return TemplateResponse(request, vtemplate, {'form': form, 'page': page})
+    return TemplateResponse(request, vtemplate, {'form': form, 'page': page, 'product': product})
+
+@login_required_ajax404
+def product_smallview(request, id, vtemplate):
+    u"""
+    просмотр данных о товаре/услуге по ID
+    """
+    product = get_object_or_404(Product, pk=int(id))
+    if 'page' in request.GET:
+        page = request.GET['page']
+    else:
+        page = 1
+    return TemplateResponse(request, vtemplate, {'product': product, 'page': page,})

@@ -93,5 +93,73 @@ function smalledit (product, p) {
         },
     });
 }
-function smalledit_cancel (product) {}
-function smalledit_save (product) {}
+function smalledit_cancel (product, p) {
+    $.ajax({
+        url: '/product/smallview/' + product,
+        type: 'GET',
+        data: {
+            page: p
+        },
+        dataType: 'html',
+        context: document.body,
+        success: function (data) {
+            $('#product_' + product).html(data);
+        },
+        error: function () {
+            message = "<p>Ошибка обработки данных.</p>";
+            $('#product_' + product).html(message);
+        },
+    });
+}
+// validate data
+function val_validate(val_id, force) {
+    str = $(val_id).val();
+    str = jQuery.trim(str.replace(/,/gi, "."));
+    $(val_id).val(str);
+    if (force) val = parseFloat(str);
+    else val = str;
+    if (isNaN(val)) return false;
+    else return val;
+}
+function torusdec (val_id) {
+    str = $(val_id).val();
+    str = jQuery.trim(str.replace(/,/gi, "."));
+    $(val_id).val(str);
+    return str;
+}
+function smalledit_save (product, p) {
+    prefix = '#id_' + product + '_';
+    name_id = prefix + 'name';
+    price_id = prefix + 'price';
+    rest_id = prefix + 'rest';
+    if ($(prefix + 'service').is(':checked')) service = 1;
+    else service = 0; 
+    price = torusdec(price_id);
+    rest = torusdec(rest_id);
+    $.ajax({
+        url: '/product/smalledit/' + product + '/?page=' + p,
+        type: 'POST',
+        data: {
+            name: $(name_id).val(),
+            price: price,
+            rest: rest,
+            comment: $(prefix + 'comment').val(),
+            service: service,
+        },
+        dataType: 'html',
+        context: document.body,
+        success: function (data) {
+            if (data != '1') {
+                // alert('Пожалуйста проверьте указанные значения (название не может дублироваться)');
+                $('#product_' + product).html(data);
+            }
+            else {
+                smalledit_cancel(product, p);
+            }
+        },
+        error: function () {
+            alert("ошибка");
+            // smalledit_cancel(product, page);
+        },
+    });
+}
