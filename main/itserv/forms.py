@@ -18,7 +18,21 @@ class ProductForm(forms.ModelForm):
 
     class Meta:
         model = Product
-        fields = ('provider', 'name', 'price', 'rest', 'service', 'comment')        
+        fields = ('provider', 'name', 'price', 'rest', 'service', 'comment')  
+
+class ProductManyForm(forms.ModelForm):
+    u"""
+    Форма для добавления/правки данных о нескольких товарах
+    """
+
+    class Meta:
+        model = Product
+        fields = ('provider', 'name', 'price', 'rest', 'service', 'comment')
+        widgets = {'provider': forms.Select(attrs={'style': 'width: 100%'}),
+            'name': forms.TextInput(attrs={'style': 'width: 100%'}),
+            'price': forms.TextInput(attrs={'style': 'width: 100%'}),
+            'rest': forms.TextInput(attrs={'style': 'width: 100%'}),
+            'comment': forms.TextInput()}
 
 class ProviderSelectForm(forms.Form):
     u"""

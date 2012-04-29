@@ -1,33 +1,56 @@
 {% block content %}
-{% if products %}
-    {% if pagec > 1 %}
-        <div class="pagination pagination-centered">
-            <ul>
-                <li><a href="javascript:product_search({{ page|add:-1 }})">&laquo;</a></li>
-                {% for p in allpage %}
-                    {% if p == page %}
-                        <li class="active">
-                            <a href="#">{{ p }}</a>
-                        </li>
-                    {% else %}
-                        <li>
-                            <a href="javascript:product_search({{ p }})">{{ p }}</a>
-                        </li>
-                    {% endif %}
-                {% endfor %}
-                <li><a href="javascript:product_search({{ page|add:1 }})">&raquo;</a></li>
+{% load itags %}
+<div class="row-fluid">
+    <div class="span2">
+        <div class="btn-group">
+            <button class="btn btn-success">
+                <i class="icon-list-alt icon-white"></i>
+                Добавить
+            </button>
+            <button class="btn btn-success dropdown-toggle" data-toggle="dropdown">
+                <span class="caret"></span>
+            </button>
+            <ul class="dropdown-menu">
+                <li><a href="/product/add/">1 запись</a></li>
+                <li><a href="/product/many/5/?provider={{ provider }}">5 записей</a></li>
+                <li><a href="/product/many/10/?provider={{ provider }}">10 записей</a></li>
+                <li><a href="/product/many/50/?provider={{ provider }}">50 записей</a></li>
             </ul>
         </div>
-    {% endif %}
+    </div>
+    <div class="span10">
+        {% if pagec > 1 %}
+            <div class="pagination pagination-right">
+                <ul>
+                    <li><a href="javascript:product_search({{ page|add:-1 }})">&laquo;</a></li>
+                    {% for p in allpage %}
+                        {% if p == page %}
+                            <li class="active">
+                                <a href="#">{{ p }}</a>
+                            </li>
+                        {% else %}
+                            <li>
+                                <a href="javascript:product_search({{ p }})">{{ p }}</a>
+                            </li>
+                        {% endif %}
+                    {% endfor %}
+                    <li><a href="javascript:product_search({{ page|add:1 }})">&raquo;</a></li>
+                </ul>
+            </div>
+        {% endif %}
+    </div>
+</div>
+
+{% if products %}
     <div class="row-fluid">
         <div class="span3">
             <strong>Название</strong>
         </div>
         <div class="span2">
-            <strong>Цена</strong>
+            <strong>Цена, руб.</strong>
         </div>
         <div class="span2">
-            <strong>Остаток</strong>
+            <strong>Остаток, шт.</strong>
         </div>
         <div class="span3">
             <strong>Примечание</strong>
@@ -46,10 +69,10 @@
                 {% endif %}
             </div>
             <div class="span2">
-                {{ product.price }} руб.
+                {{ product.price|rusnum }}
             </div>
             <div class="span2">
-                {{ product.rest }} шт.
+                {{ product.rest }}
             </div>
             <div class="span3">
                 {{ product.comment|default:"" }}&nbsp;
@@ -67,7 +90,8 @@
             </div>
         </div><br />
     {% endfor %}
-{% else %}    
+{% else %}
+    <br />
     <p>По указанным условиям поиска данные отсутствуют.</p>
 {% endif %}
 

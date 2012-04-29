@@ -3,6 +3,7 @@ from django.contrib.auth.decorators import login_required, permission_required, 
 from django.shortcuts import render_to_response, get_object_or_404, redirect
 from django.http import HttpResponse, HttpResponseRedirect, Http404, HttpResponseNotFound
 from django.template.response import TemplateResponse
+from django.forms.models import modelformset_factory
 from django.core.context_processors import csrf
 from django.db.models import Q, F, Sum
 from django.db import transaction
@@ -161,6 +162,7 @@ def product_search(request, vtemplate):
     """
     products = Product.objects.all()
     page = 1
+    prov = 0
     try:
         if request.method == 'POST':
             prov = int(request.POST['provider'])
@@ -178,7 +180,7 @@ def product_search(request, vtemplate):
         products, iter_page, count_page, page = pagination_info(products, PAGE_COUNT, page)
     except (KeyError, ValueError) as err:
         logger.info(err)
-    return TemplateResponse(request, vtemplate, {'products': products, 
+    return TemplateResponse(request, vtemplate, {'products': products, 'provider': prov,
         'page': page, 'allpage': iter_page, 'pagec': count_page})
 
 permission_required('itserv.change_product')
@@ -205,3 +207,27 @@ def product_add(request, vtemplate):
     if saved:
         return redirect('/products/?provider=' + str(product.provider.id))
     return TemplateResponse(request, vtemplate, {'form': form, 'action': u'Добавление'})
+
+permission_required('itserv.add_product')
+def product_manyadd(request, extra_num, vtemplate):
+    u"""
+    Добавление сразу нескольких товарос/услуг
+    """
+    c = {}
+    c.update(csrf(request))
+    extra_num = 1 if int(extra_num) < 1 else int(extra_num)
+    ProductFormSet = modelformset_factory(Product, extra=extra_num, form=ProductManyForm)
+    if request.method == 'POST':
+        formset = ProductFormSet(request.POST)
+        if formset.is_valid():
+            with transaction.commit_on_success():
+                for form in formset:
+                    # skip empty forms
+                    if form.cleaned_data:
+                        product = form.save()
+            return redirect('/products/')
+    else:
+        qproduct = Product.objects.none()
+        formset = ProductFormSet(queryset=qproduct)
+    return TemplateResponse(request, vtemplate, {'formset': formset})
+

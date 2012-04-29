@@ -1,0 +1,65 @@
+{% extends "base.html" %}
+{% load widget_tweaks %}
+
+{% block title %}Добавление товаров{% endblock %}
+
+{% block content %}
+    <h1>Добавление данных о товарах / услугах</h1>
+    <br />
+    <form method="POST" id="editform" action="">
+        {% csrf_token %}{{ formset.management_form }}
+        <div class="row-fluid">
+            <div class="span2">
+                <strong>Поставщик</strong>
+            </div>
+            <div class="span2">
+                <strong>Название</strong>
+            </div>
+            <div class="span1">
+                <strong>Услуга</strong>
+            </div>
+            <div class="span2">
+                <strong>Цена, руб.</strong>
+            </div>
+            <div class="span2">
+                <strong>Остаток, шт.</strong>
+            </div>
+            <div class="span2">
+                <strong>Примечание</strong>
+            </div>
+        </div>
+        <hr />
+        {% for form in formset %}
+            <div class="row-fluid">
+                <div class="span2">
+                    {{ form.provider }}
+                    {{ form.provider.errors|lower }}
+                </div>
+                <div class="span2">
+                    {{ form.name }}
+                    {{ form.name.errors|lower }}
+                </div>
+                <div class="span1">
+                    <center>{{ form.service }}</center>
+                </div>
+                <div class="span2">
+                    {{ form.price }}
+                    {{ form.price.errors|lower }}
+                </div>
+                <div class="span2">
+                    {{ form.rest }}
+                    {{ form.rest.errors|lower }}
+                </div>
+                <div class="span2">
+                    {{ form.comment}}
+                </div>
+
+            </div>        
+        {% endfor %}
+        <div class="form-actions">
+            <button class="btn btn-primary" type="submit">Сохранить</button>
+            <button class="btn" type="reset">Отменить</button>
+        </div>
+    </form>
+    {# {{ formset }} #}
+{% endblock %}

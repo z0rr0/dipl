@@ -60,6 +60,12 @@ urlpatterns = patterns('',
     # редактирование данных о товаре
     (r'^product/edit/(?P<id>\d+)/?$', 'itserv.views.product_edit', {
         'vtemplate': 'product_edit.html'}),
+    # добавление данных о товаре
+    (r'^product/add/?$', 'itserv.views.product_add', {
+        'vtemplate': 'product_edit.html'}),
+    # добавление нескольких строк данных о товаре/услуге
+    (r'^product/many/(?P<extra_num>\d+)/?$', 'itserv.views.product_manyadd', {
+        'vtemplate': 'product_manyadd.html'}),
 )
 
 # media content                   
