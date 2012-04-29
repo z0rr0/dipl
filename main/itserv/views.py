@@ -231,3 +231,16 @@ def product_manyadd(request, extra_num, vtemplate):
         formset = ProductFormSet(queryset=qproduct)
     return TemplateResponse(request, vtemplate, {'formset': formset})
 
+@login_required_ajax404
+def product_smalledit(request, id, vtemplate):
+    # Быстрое редактирование товара
+    if request.user.has_perm('itserv.change_product'):
+        product = get_object_or_404(Product, pk=int(id))
+        form, product, saved = get_obj_form(request, product, ProductSmallForm)
+        if 'page' in request.GET:
+            page = request.GET['page']
+        else:
+            page = 1
+    else:
+        return HttpResponseNotFound('Error search object')
+    return TemplateResponse(request, vtemplate, {'form': form, 'page': page})

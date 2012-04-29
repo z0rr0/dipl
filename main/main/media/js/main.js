@@ -39,7 +39,7 @@ $(document).ajaxSend(function(event, xhr, settings) {
 });
 function product_search(page) {
     page = typeof page !== 'undefined' ? page : 1;
-    $('#product_list').html('<p>Пожалуйста подождите, идет поиск...</p>');
+    // $('#product_list').html('<p>Пожалуйста подождите, идет поиск...</p>');
     var_provider = $('#id_provider').val();
     var_search = $('#id_search').val();
     if ($('#id_onlyservice').is(':checked')) var_onlyserv = 1;
@@ -73,3 +73,25 @@ function delete_product(id) {
                 alert(error_msg);
             });
 }
+// quickly edit product
+function smalledit (product, p) {
+    // $('#product_' + product).html('<p>Пожалуйста подождите, идет поиск...</p>');
+    $.ajax({
+        url: '/product/smalledit/' + product,
+        type: 'GET',
+        data: {
+            page: p
+        },
+        dataType: 'html',
+        context: document.body,
+        success: function (data) {
+            $('#product_' + product).html(data);
+        },
+        error: function () {
+            message = "<p>Ошибка обработки данных.</p>";
+            $('#product_' + product).html(message);
+        },
+    });
+}
+function smalledit_cancel (product) {}
+function smalledit_save (product) {}

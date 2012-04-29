@@ -66,6 +66,9 @@ urlpatterns = patterns('',
     # добавление нескольких строк данных о товаре/услуге
     (r'^product/many/(?P<extra_num>\d+)/?$', 'itserv.views.product_manyadd', {
         'vtemplate': 'product_manyadd.html'}),
+    # редактирование только основных данных о товаре
+    (r'^product/smalledit/(?P<id>\d+)/?$', 'itserv.views.product_smalledit', {
+        'vtemplate': 'product_smalledit.html'}),
 )
 
 # media content                   

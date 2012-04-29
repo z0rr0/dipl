@@ -6,7 +6,6 @@ class ProviderForm(forms.ModelForm):
     u"""
     Форма для добавления/правки данных поставщиках
     """
-
     class Meta:
         model = Provider
         fields = ('name', 'phone', 'email', 'address', 'site', 'comment')
@@ -15,16 +14,27 @@ class ProductForm(forms.ModelForm):
     u"""
     Форма для добавления/правки данных о товаре
     """
-
     class Meta:
         model = Product
         fields = ('provider', 'name', 'price', 'rest', 'service', 'comment')  
+
+class ProductSmallForm(forms.ModelForm):
+    u"""
+    Форма для добавления/правки данных о товаре
+    """
+    class Meta:
+        model = Product
+        fields = ('service', 'name', 'price', 'rest', 'comment')
+        widgets = {
+            # 'name': forms.TextInput(attrs={'style': 'width: 100%'}),
+            # 'price': forms.TextInput(attrs={'style': 'width: 100%'}),
+            # 'rest': forms.TextInput(attrs={'style': 'width: 100%'}),
+            'comment': forms.TextInput()}
 
 class ProductManyForm(forms.ModelForm):
     u"""
     Форма для добавления/правки данных о нескольких товарах
     """
-
     class Meta:
         model = Product
         fields = ('provider', 'name', 'price', 'rest', 'service', 'comment')

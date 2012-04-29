@@ -1,0 +1,25 @@
+{% load widget_tweaks %}
+<div class="span10">
+    <form class="form-inline" method="POST" action="">
+        {% csrf_token %}{{ form.management_form }}
+        {{ form.name }}
+        {{ form.price|add_class:"input-small" }}
+        {{ form.rest|add_class:"input-small" }}
+        {{ form.comment }}
+        <label class="checkbox">
+            {{ form.service }} услуга
+        </label>
+    </form>    
+
+</div>
+<div class="span2">
+    <a class="btn btn-success" href="javascript:smalledit({{ product.id }})" title="Сохранение">
+        <i class="icon-ok-sign icon-white"></i>
+    </a>
+    <a class="btn btn-inverse" href="javascript:product_search({{ page }})" title="Отмена изменений">
+        <i class="icon-remove-sign icon-white"></i>
+    </a>
+    <a class="btn btn-danger" href="javascript:delete_product({{ product.id }})" title="Удаление">
+        <i class="icon-trash icon-white"></i>
+    </a>
+</div>
