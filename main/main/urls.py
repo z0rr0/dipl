@@ -26,7 +26,9 @@ urlpatterns = patterns('',
     # главная страница
     url(r'^$', 'itserv.views.index', {'vtemplate': 'index.html'}),
 
-    # поставщики - полный список
+    # **************************************************
+    # ПОСТАВЩИКИ
+    # **************************************************
     url(r'^providers/$', 'itserv.views.obj_all', {
         'vtemplate': 'provider_home.html',
         'model': Provider
@@ -43,7 +45,9 @@ urlpatterns = patterns('',
     (r'^provider/add/?$', 'itserv.views.provider_add', {
         'vtemplate': 'provider_edit.html'}),
 
-    # товары
+    # **************************************************
+    # ТОВАРЫ
+    # **************************************************
     url(r'^products/$', 'itserv.views.product_all', {
         'vtemplate': 'product_home.html'}),
     # поиск товаров
@@ -72,6 +76,26 @@ urlpatterns = patterns('',
     # просмотр основных данных о товаре
     (r'^product/smallview/(?P<id>\d+)/?$', 'itserv.views.product_smallview', {
         'vtemplate': 'product_smallview.html'}),
+
+    # **************************************************
+    # КЛИЕНТЫ
+    # **************************************************
+    url(r'^clients/$', 'itserv.views.obj_all', {
+        'vtemplate': 'client_home.html',
+        'model': Client
+        }),
+    # удаление клиента
+    (r'^client/delete/(?P<id>\d+)/?$', 'itserv.views.obj_delete', {
+        'redirecturl': '/clients/',
+        'model': Client, 
+        'perm': 'itserv.delete_client'}),
+    # редактирование данных о клиента
+    (r'^client/edit/(?P<id>\d+)/?$', 'itserv.views.client_edit', {
+        'vtemplate': 'client_edit.html'}),
+    # добавление данных о клиенте
+    (r'^client/add/?$', 'itserv.views.client_add', {
+        'vtemplate': 'client_edit.html'}),
+
 )
 
 # media content                   

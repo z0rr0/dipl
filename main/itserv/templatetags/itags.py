@@ -9,7 +9,6 @@ register = template.Library()
 def rusnum(value):
     return locale.format('%0.2f', value, True)
 
-
 @register.filter(name='errorcss')
 def errorcss(value):
     u""" 

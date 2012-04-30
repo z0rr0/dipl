@@ -27,8 +27,6 @@ class ProductSmallForm(forms.ModelForm):
         fields = ('service', 'name', 'price', 'rest', 'comment')
         widgets = {
             # 'name': forms.TextInput(attrs={'style': 'width: 100%'}),
-            # 'price': forms.TextInput(attrs={'style': 'width: 100%'}),
-            # 'rest': forms.TextInput(attrs={'style': 'width: 100%'}),
             'comment': forms.TextInput()}
 
 class ProductManyForm(forms.ModelForm):
@@ -52,4 +50,12 @@ class ProviderSelectForm(forms.Form):
     CHOICES = [(0, '-----')]
     CHOICES += [(p.id, p.name) for p in Provider.objects.all()]
     provider = forms.ChoiceField(label=u'поставщик', widget=forms.Select(), choices=CHOICES)
-    onlyservice = forms.BooleanField(label=u'только услуги', widget=forms.CheckboxInput())   
+    onlyservice = forms.BooleanField(label=u'только услуги', widget=forms.CheckboxInput())  
+
+class ClientForm(forms.ModelForm):
+    u"""
+    Форма для добавления/правки данных клиенте
+    """
+    class Meta:
+        model = Client
+        fields = ('name', 'phone', 'email', 'discont', 'address', 'comment')

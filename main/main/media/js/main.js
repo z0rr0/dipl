@@ -132,20 +132,20 @@ function smalledit_save (product, p) {
     name_id = prefix + 'name';
     price_id = prefix + 'price';
     rest_id = prefix + 'rest';
-    if ($(prefix + 'service').is(':checked')) service = 1;
-    else service = 0; 
     price = torusdec(price_id);
     rest = torusdec(rest_id);
+    to_data_send = {
+        name: $(name_id).val(),
+        price: price,
+        rest: rest,
+        comment: $(prefix + 'comment').val()
+    }
+    if ($(prefix + 'service').is(':checked')) to_data_send['service'] = 1;
+    // else service = 0; 
     $.ajax({
         url: '/product/smalledit/' + product + '/?page=' + p,
         type: 'POST',
-        data: {
-            name: $(name_id).val(),
-            price: price,
-            rest: rest,
-            comment: $(prefix + 'comment').val(),
-            service: service,
-        },
+        data: to_data_send,
         dataType: 'html',
         context: document.body,
         success: function (data) {
@@ -158,8 +158,8 @@ function smalledit_save (product, p) {
             }
         },
         error: function () {
-            alert("ошибка");
-            // smalledit_cancel(product, page);
+            error_msg = "Ошибка обработки данных. Возможно у Вас не хватает прав или нет соединения с сервером.";
+            alert(error_msg);
         },
     });
 }

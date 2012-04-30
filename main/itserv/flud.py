@@ -34,7 +34,7 @@ def flud_provider(obj_count=50):
                 name=gen_salt(),
                 address=u'почтовый адрес',
                 phone='8-(831)-47-455-66',
-                email='test@asi.ru',
+                email='test@apiasi.ru',
                 comment=u"создано автоматически",
                 modified=for_one_date,
                 created=for_one_date,
@@ -79,4 +79,30 @@ def flud_product(obj_count=50, service=False):
     except Provider.DoesNotExist as err:
         print err
         return False
+    return True
+
+@nodebug
+def flud_client(obj_count=10):
+    try:
+        for_one_date = datetime.now()
+        for i in range(obj_count):
+            client = Client(
+                name=gen_salt(),
+                phone='8-(831)-47-455-66',
+                email='test@apiasi.ru',
+                address=u'почтовый адрес',
+                discont=0.0,
+                comment=u"создано автоматически",
+                modified=for_one_date,
+                created=for_one_date,
+            )
+            client.save()
+            # get id
+            client.name = u'Клиент_' + str(client.id)
+            client.save()
+            print(client)
+    except Client.DoesNotExist as err:
+        print err
+        return False
+    print 'End function'
     return True

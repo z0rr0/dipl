@@ -44,8 +44,16 @@ def obj_all(request, vtemplate, model):
     u""" 
     Список объектов
     """
-    objlist = model.objects.all()    
-    return TemplateResponse(request, vtemplate, {'objlist': objlist})
+    c = {}
+    c.update(csrf(request))
+    objlist = model.objects.all()
+    if request.method == 'POST':
+        if 'searchtext' in request.POST:
+            searchtext = request.POST['searchtext']
+            objlist = objlist.filter(name__icontains=searchtext)
+    else:
+        searchtext = ""
+    return TemplateResponse(request, vtemplate, {'objlist': objlist, 'searchtext': searchtext})
 
 @login_required
 def obj_delete(request, id, redirecturl, model, perm):
@@ -153,7 +161,7 @@ def pagination_info(objs, onpage, page):
     elif page > pagec:
         page = pagec
     getobj = objs[(page-1)*onpage:page*onpage]
-    return getobj, allpage, pagec, page
+    return getobj, allpage, page
 
 @login_required_ajax404
 def product_search(request, vtemplate):
@@ -177,11 +185,11 @@ def product_search(request, vtemplate):
         if 'page' in request.GET:
             page = int(request.GET['page'])
         # постраничный просмотр
-        products, iter_page, count_page, page = pagination_info(products, PAGE_COUNT, page)
+        products, iter_page, page = pagination_info(products, PAGE_COUNT, page)
     except (KeyError, ValueError) as err:
         logger.info(err)
     return TemplateResponse(request, vtemplate, {'products': products, 'provider': prov,
-        'page': page, 'allpage': iter_page, 'pagec': count_page})
+        'page': page, 'allpage': iter_page})
 
 permission_required('itserv.change_product')
 def product_edit(request, id, vtemplate):
@@ -242,6 +250,7 @@ def product_smalledit(request, id, vtemplate):
                 form = ProductSmallForm(request.POST, instance=product, auto_id='id_' + str(product.id) + '_%s')
                 if form.is_valid():
                     form.save()
+                    # данные сохранены
                     status = 1
             except:
                 pass
@@ -268,3 +277,28 @@ def product_smallview(request, id, vtemplate):
     else:
         page = 1
     return TemplateResponse(request, vtemplate, {'product': product, 'page': page,})
+
+permission_required('itserv.change_client')
+def client_edit(request, id, vtemplate):
+    u""" 
+    Редактирование данных о клиенте 
+    """
+    c = {}
+    c.update(csrf(request))
+    client = get_object_or_404(Client, id=int(id))
+    form, client, saved = get_obj_form(request, client, ClientForm)
+    if saved:
+        return redirect('/clients/')
+    return TemplateResponse(request, vtemplate, {'form': form, 'action': u'Редактирование'})
+
+permission_required('itserv.add_client')
+def client_add(request, vtemplate):
+    u""" 
+    Редактирование данных о клиенте 
+    """
+    c = {}
+    c.update(csrf(request))
+    form, client, saved = get_obj_form(request, None, ClientForm)
+    if saved:
+        return redirect('/clients/')
+    return TemplateResponse(request, vtemplate, {'form': form, 'action': u'Добавление'})

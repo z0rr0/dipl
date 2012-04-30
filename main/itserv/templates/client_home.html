@@ -1,18 +1,18 @@
 {% extends "base.html" %}
-{% block title %}Поставщики{% endblock %}
+{% block title %}Клиенты{% endblock %}
 
 {% block content %}
-    <h1>Список поставщиков</h1>
+    <h1>Список клиентов</h1>
     <div class="row-fluid">
         <div class="span12">
             <form class="well form-search" method="POST" action="">
                 {% csrf_token %}{{ form.management_form }}
                 <input type="text" class="input-medium search-query"
-                    name="searchtext" placeholder="название..." value="{{ searchtext }}">
+                    name="searchtext" placeholder="поиск по имени..." value="{{ searchtext }}">
                 <button type="submit" class="btn">Поиск</button>
             </form>
             <p>
-                <a class="btn btn-success" href="/provider/add/" title="Добавление">
+                <a class="btn btn-success" href="/client/add/" title="Добавление">
                     <i class="icon-plus icon-white"></i>
                     Добавить
                 </a>
@@ -21,28 +21,32 @@
                 <table class="table table-striped">
                     <tr>
                         <th>№</th>
-                        <th>Наименование</th>
+                        <th>Ф.И.О.</th>
                         <th>Телефон</th>
                         <th>Электронный адрес</th>
+                        <th>Скидка</th>
                         <th>Почтовый адрес</th>
-                        <th>Сайт</th>
                         <th>Примечание</th>
                         <th></th>
                     </tr>
-                    {% for prov in objlist %}
+                    {% for client in objlist %}
                         <tr>
                             <td>{{ forloop.counter }}</td>
-                            <td><a href="/products/?provider={{ prov.id }}" title="Перейти к товарам поставщика">{{ prov.name }}</a></td>
-                            <td>{{ prov.phone }}</td>
-                            <td>{{ prov.email|urlizetrunc:18 }}</td>
-                            <td>{{ prov.address }}</td>
-                            <td>{{ prov.site|default:""|urlizetrunc:18 }}</td>
-                            <td>{{ prov.comment|default:"" }}</td>
                             <td>
-                                <a class="btn btn-primary" href="/provider/edit/{{ prov.id }}" title="Правка">
+                                <!-- <a href="/products/?client={{ client.id }}" title="Перейти к товарам поставщика">
+                                </a> -->
+                                {{ client.name }}
+                            </td>
+                            <td>{{ client.phone }}</td>
+                            <td>{{ client.email|urlizetrunc:18 }}</td>
+                            <td>{{ client.discont|default:"---" }}</td>
+                            <td>{{ client.address }}</td>
+                            <td>{{ client.comment|default:"" }}</td>
+                            <td>
+                                <a class="btn btn-primary" href="/client/edit/{{ client.id }}" title="Правка">
                                     <i class="icon-pencil icon-white"></i>
                                 </a>
-                                <a class="btn btn-danger" href="/provider/delete/{{ prov.id }}" title="Удаление" onclick="return confirm('Вы действительно хотите удалить поставщика?');">
+                                <a class="btn btn-danger" href="/client/delete/{{ client.id }}" title="Удаление" onclick="return confirm('Вы действительно хотите удалить клиента?');">
                                     <i class="icon-trash icon-white"></i>
                                 </a>
                             </td>
@@ -50,8 +54,8 @@
                     {% endfor %}
                 </table>
             {% else %}
-                <p>Поставщики на найдены</p>
+                <p>Клиенты на найдены</p>
             {% endif %}
         </div>
     </div>
-{% endblock content %}
+{% endblock %}

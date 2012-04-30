@@ -19,7 +19,7 @@
         </div>
     </div>
     <div class="span10">
-        {% if pagec > 1 %}
+        {% if allpage|length > 1 %}
             <div class="pagination pagination-right">
                 <ul>
                     <li><a href="javascript:product_search({{ page|add:-1 }})">&laquo;</a></li>
