@@ -128,8 +128,9 @@ TEMPLATE_DIRS = (
     # Don't forget to use absolute paths, not relative paths.
 )
 
-for root, dirs, files in os.walk(PROJECT_PATH):
-    if 'templates' in dirs: TEMPLATE_DIRS += (os.path.join(root, 'templates'),)
+TEMPLATE_DIRS += (os.path.join(PROJECT_PATH, 'templates'),)
+# for root, dirs, files in os.walk(PROJECT_PATH):
+#     if 'templates' in dirs: TEMPLATE_DIRS += (os.path.join(root, 'templates'),)
 
 INSTALLED_APPS = (
     'django.contrib.auth',
