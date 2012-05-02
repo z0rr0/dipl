@@ -24,6 +24,8 @@ class Client(models.Model):
 
     class Meta:
         ordering = ['name']
+        verbose_name = u"клиент"
+        verbose_name_plural = u"клиенты"
 
 class Provider(models.Model):
     u"""
