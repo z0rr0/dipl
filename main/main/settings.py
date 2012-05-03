@@ -3,7 +3,7 @@
 
 import socket, os
 
-if socket.gethostname() == 'thebestzorro':
+if socket.gethostname() in ('thebestzorro', 'thebestzorro.ru'):
     DEBUG = False
 else:
     DEBUG = True
