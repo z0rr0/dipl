@@ -94,6 +94,7 @@ function smalledit (product, p) {
         },
     });
 }
+// cancal edit product, return to view product
 function smalledit_cancel (product, p) {
     $.ajax({
         url: '/product/smallview/' + product,
@@ -163,4 +164,31 @@ function smalledit_save (product, p) {
             alert(error_msg);
         },
     });
+}
+function reqlist_search() {
+    $.ajax({
+        url: '/reqlist/search/',
+        type: 'POST',
+        data: {
+            client: $('#id_client').val()
+        },
+        dataType: 'html',
+        context: document.body,
+        success: function (data) {
+            $('#clientreq').html(data);
+        },
+        error: function () {
+            error_msg = "<p>Ошибка обработки данных. Возможно у Вас не хватает прав или нет соединения с сервером.</p>";
+            $('#clientreq').html(error_msg);
+        },
+    });
+}
+// delete product record
+function delete_req(id) {
+    $.get('/reqlist/ajdel/' + id, function(data) {
+            reqlist_search()
+        }).error(function() { 
+            error_msg = "Ошибка обработки данных. Возможно у Вас не хватает прав или нет соединения с сервером.";
+            alert(error_msg);
+        });
 }

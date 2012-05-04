@@ -1,0 +1,50 @@
+{% load itags %}
+{# добавление #}
+{% if objlist %}
+    <table class="table table-striped">
+        <tr>
+            <th>№</th>
+            {% if not client %}
+                <th>Клиент</th>
+            {% endif %}
+            <th>Товар / услуга</th>
+            <th>Количество, шт.</th>
+            <th>Цена, руб.</th>
+            <th>Итого, руб.</th>
+            <th></th>
+        </tr>
+        {% for reqlist in objlist %}
+            <tr>
+                <td>{{ forloop.counter }}</td>
+                {% if not client %}
+                    <td>{{ reqlist.client.name }}</td>
+                {% endif %}
+                <td>
+                    {{ reqlist.product.name }}
+                    {% if reqlist.product.service %}
+                        <i class="icon-flag"></i>
+                {% endif %}
+                </td>
+                <td>{{ reqlist.number|default:"---" }}</td>
+                <td>{{ reqlist.product.price|rusnum }}</td>
+                <td>{{ reqlist.itog|rusnum }}</td>
+                <td>
+                    <nobr>
+                        <a class="btn btn-primary" href="/reqlist/edit/{{ reqlist.id }}" title="Правка">
+                            <i class="icon-pencil icon-white"></i>
+                        </a>
+                        <a class="btn btn-danger" href="javascript:delete_req({{ reqlist.id }})" title="Удаление">
+                            <i class="icon-trash icon-white"></i>
+                        </a>
+                    </nobr>
+                </td>
+            </tr>
+        {% endfor %}
+        <tr>
+            <td colspan="{{ cols }}"><strong>ИТОГО</strong></td>
+            <td><strong>{{ allsum|rusnum }}</strong></td>
+            <td></td>
+        </tr>
+{% else %}
+    <p>Данные не найдены.</p>
+{% endif %}

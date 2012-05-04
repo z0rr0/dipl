@@ -33,23 +33,23 @@
                         <tr>
                             <td>{{ forloop.counter }}</td>
                             <td>
-                                <!-- <a href="/products/?client={{ client.id }}" title="Перейти к товарам поставщика">
-                                </a> -->
-                                {{ client.name }}
+                                <a href="/reqlists/?client={{ client.id }}" title="Перейти к заявкам">
+                                    {{ client.name }}
+                                </a>
                             </td>
                             <td>{{ client.phone }}</td>
                             <td>{{ client.email|urlizetrunc:18 }}</td>
                             <td>{{ client.discont|default:"---" }}</td>
                             <td>{{ client.address }}</td>
                             <td>{{ client.comment|default:"" }}</td>
-                            <td>
+                            <td><nobr>
                                 <a class="btn btn-primary" href="/client/edit/{{ client.id }}" title="Правка">
                                     <i class="icon-pencil icon-white"></i>
                                 </a>
                                 <a class="btn btn-danger" href="/client/delete/{{ client.id }}" title="Удаление" onclick="return confirm('Вы действительно хотите удалить клиента?');">
                                     <i class="icon-trash icon-white"></i>
                                 </a>
-                            </td>
+                            </nobr></td>
                         </tr>
                     {% endfor %}
                 </table>

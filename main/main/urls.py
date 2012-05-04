@@ -34,15 +34,15 @@ urlpatterns = patterns('',
         'model': Provider
         }),
     # удаление поставщика
-    (r'^provider/delete/(?P<id>\d+)/?$', 'itserv.views.obj_delete', {
+    url(r'^provider/delete/(?P<id>\d+)/?$', 'itserv.views.obj_delete', {
         'redirecturl': '/providers/',
         'model': Provider, 
         'perm': 'itserv.delete_provider'}),
     # редактирование данных о поставщике
-    (r'^provider/edit/(?P<id>\d+)/?$', 'itserv.views.provider_edit', {
+    url(r'^provider/edit/(?P<id>\d+)/?$', 'itserv.views.provider_edit', {
         'vtemplate': 'provider_edit.html'}),
     # добавление данных о поставщике
-    (r'^provider/add/?$', 'itserv.views.provider_add', {
+    url(r'^provider/add/?$', 'itserv.views.provider_add', {
         'vtemplate': 'provider_edit.html'}),
 
     # **************************************************
@@ -54,27 +54,27 @@ urlpatterns = patterns('',
     url(r'^product/search/$', 'itserv.views.product_search', {
         'vtemplate': 'product_search.html'}),
     # удаление товара
-    (r'^product/delete/(?P<id>\d+)/?$', 'itserv.views.obj_delete', {
+    url(r'^product/delete/(?P<id>\d+)/?$', 'itserv.views.obj_delete', {
         'redirecturl': '/products/',
         'model': Product, 
         'perm': 'itserv.delete_product'}),
-    (r'^product/ajdel/(?P<id>\d+)/?$', 'itserv.views.obj_delete_ajax', {
+    url(r'^product/ajdel/(?P<id>\d+)/?$', 'itserv.views.obj_delete_ajax', {
         'model': Product,
         'perm': 'itserv.delete_product'}),
     # редактирование данных о товаре
-    (r'^product/edit/(?P<id>\d+)/?$', 'itserv.views.product_edit', {
+    url(r'^product/edit/(?P<id>\d+)/?$', 'itserv.views.product_edit', {
         'vtemplate': 'product_edit.html'}),
     # добавление данных о товаре
-    (r'^product/add/?$', 'itserv.views.product_add', {
+    url(r'^product/add/?$', 'itserv.views.product_add', {
         'vtemplate': 'product_edit.html'}),
     # добавление нескольких строк данных о товаре/услуге
-    (r'^product/many/(?P<extra_num>\d+)/?$', 'itserv.views.product_manyadd', {
+    url(r'^product/many/(?P<extra_num>\d+)/?$', 'itserv.views.product_manyadd', {
         'vtemplate': 'product_manyadd.html'}),
     # редактирование только основных данных о товаре
-    (r'^product/smalledit/(?P<id>\d+)/?$', 'itserv.views.product_smalledit', {
+    url(r'^product/smalledit/(?P<id>\d+)/?$', 'itserv.views.product_smalledit', {
         'vtemplate': 'product_smalledit.html'}),
     # просмотр основных данных о товаре
-    (r'^product/smallview/(?P<id>\d+)/?$', 'itserv.views.product_smallview', {
+    url(r'^product/smallview/(?P<id>\d+)/?$', 'itserv.views.product_smallview', {
         'vtemplate': 'product_smallview.html'}),
 
     # **************************************************
@@ -85,16 +85,32 @@ urlpatterns = patterns('',
         'model': Client
         }),
     # удаление клиента
-    (r'^client/delete/(?P<id>\d+)/?$', 'itserv.views.obj_delete', {
+    url(r'^client/delete/(?P<id>\d+)/?$', 'itserv.views.obj_delete', {
         'redirecturl': '/clients/',
         'model': Client, 
         'perm': 'itserv.delete_client'}),
     # редактирование данных о клиента
-    (r'^client/edit/(?P<id>\d+)/?$', 'itserv.views.client_edit', {
+    url(r'^client/edit/(?P<id>\d+)/?$', 'itserv.views.client_edit', {
         'vtemplate': 'client_edit.html'}),
     # добавление данных о клиенте
-    (r'^client/add/?$', 'itserv.views.client_add', {
+    url(r'^client/add/?$', 'itserv.views.client_add', {
         'vtemplate': 'client_edit.html'}),
+
+    # **************************************************
+    # ЗАЯВКИ
+    # **************************************************
+    url(r'^reqlists/$', 'itserv.views.reqlist_all', {
+        'vtemplate': 'reqlist_home.html'}),
+    # заявки и товары для них
+    url(r'^product/req/$', 'itserv.views.obj_all_ajax', {
+        'vtemplate': 'product_req.html',
+        'model': Product}),
+    # поиск заявок по клиенту
+    url(r'^reqlist/search/$', 'itserv.views.reqlist_search', {
+        'vtemplate': 'reqlist_search.html'}),
+    url(r'^reqlist/ajdel/(?P<id>\d+)/?$', 'itserv.views.obj_delete_ajax', {
+        'model': Reqlist,
+        'perm': 'itserv.delete_reqlist'}),
 
 )
 

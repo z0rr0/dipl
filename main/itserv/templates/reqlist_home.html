@@ -1,0 +1,27 @@
+{% extends "base.html" %}
+{% block title %}Заявки{% endblock %}
+{% block pagejs %}
+<script type="text/javascript">
+$(document).ready(function() {
+    reqlist_search();
+    $('#id_client').change(function() {
+        reqlist_search();
+    });
+})
+</script>
+{% endblock %}
+{% block content %}
+    <h1>Заявки клиентов</h1>
+    <div class="row-fluid">
+        <div class="span12">
+            <form class="well form-inline" method="POST" action="">
+                {% csrf_token %}{{ form.management_form }}
+                <label for="id_client">{{ form.client.label }}</label>
+                {{ form.client }}
+            </form>
+        </div>
+    </div>
+    <div class="row-fluid" id="clientreq">
+        <div class="span12"><p>Список заявок.</p></div>
+    </div>
+{% endblock content %}

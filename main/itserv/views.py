@@ -5,7 +5,7 @@ from django.http import HttpResponse, HttpResponseRedirect, Http404, HttpRespons
 from django.template.response import TemplateResponse
 from django.forms.models import modelformset_factory
 from django.core.context_processors import csrf
-from django.db.models import Q, F, Sum
+from django.db.models import Q, F, Sum, Count
 from django.db import transaction
 from django.contrib import auth
 
@@ -39,13 +39,8 @@ def index(request, vtemplate):
     # logger.info(program)
     return TemplateResponse(request, vtemplate, {'deviz': deviz})
 
-@login_required
-def obj_all(request, vtemplate, model):
-    u""" 
-    Список объектов
-    """
-    c = {}
-    c.update(csrf(request))
+# for private use
+def allobj(request, model):
     objlist = model.objects.all()
     if request.method == 'POST':
         if 'searchtext' in request.POST:
@@ -53,6 +48,26 @@ def obj_all(request, vtemplate, model):
             objlist = objlist.filter(name__icontains=searchtext)
     else:
         searchtext = ""
+    return objlist, searchtext
+
+@login_required
+def obj_all(request, vtemplate, model):
+    u""" 
+    Список объектов, с возможным фильтром по имени
+    """
+    c = {}
+    c.update(csrf(request))
+    objlist, searchtext = allobj(request, model)
+    return TemplateResponse(request, vtemplate, {'objlist': objlist, 'searchtext': searchtext})
+
+@login_required_ajax404
+def obj_all_ajax(request, vtemplate, model):
+    u""" 
+    Список объектов, с возможным фильтром по имени, полученный в ajax запросе
+    """
+    c = {}
+    c.update(csrf(request))
+    objlist, searchtext = allobj(request, model)
     return TemplateResponse(request, vtemplate, {'objlist': objlist, 'searchtext': searchtext})
 
 @login_required
@@ -142,7 +157,8 @@ def product_all(request, vtemplate):
             onlyservice = bool(int(request.GET['service']))
     except (KeyError, ValueError) as err:
         provider = 0
-    form = ProviderSelectForm(initial={'provider': provider, 'onlyservice': onlyservice})    
+    form = ProviderSelectForm(initial={'provider': provider, 'onlyservice': onlyservice})
+    form.fields['provider'].choices += [(p.id, p.name) for p in Provider.objects.all()]
     return TemplateResponse(request, vtemplate, {'form': form})
 
 def pagination_info(objs, onpage, page):
@@ -302,3 +318,50 @@ def client_add(request, vtemplate):
     if saved:
         return redirect('/clients/')
     return TemplateResponse(request, vtemplate, {'form': form, 'action': u'Добавление'})
+
+@login_required
+def reqlist_all(request, vtemplate):
+    u"""
+    Клиенты, оставившие заявки
+    """
+    first = 0
+    try:
+        if 'client' in request.GET:
+            client = int(request.GET['client'])
+        else:
+            client = first
+    except (KeyError, ValueError) as err:
+        client = first
+    form = ReqClientSelectForm(initial={'client': client})
+    # set choises
+    free_reqlists = Reqlist.objects.filter(contract__isnull=True).values_list('client')
+    form.fields['client'].choices +=[(p.id, p.name) for p in Client.objects.filter(id__in=free_reqlists)]
+    return TemplateResponse(request, vtemplate, {'form': form})
+
+@login_required_ajax404
+def reqlist_search(request, vtemplate):
+    u"""
+    поиск заявок клиента(ов)
+    """
+    c = {}
+    c.update(csrf(request))
+    # request не содеждит name, фильтра не будет
+    objlist = Reqlist.objects.filter(contract__isnull=True)
+    client_id = 0
+    try:
+        if request.method == 'POST':
+            if 'client' in request.POST:
+                client_id = int(request.POST['client'])
+    except (KeyError, ValueError) as err:
+        pass
+    # число столбцов в таблице
+    cols = 5 
+    if client_id:
+        objlist = objlist.filter(client=client_id)
+        cols = cols - 1
+    allsum = 0
+    for obj in objlist:
+        obj.itog = obj.product.price * obj.number
+        allsum += obj.itog
+    return TemplateResponse(request, vtemplate, {'objlist': objlist, 
+        'client': client_id, 'allsum': allsum, 'cols': cols})

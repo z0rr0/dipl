@@ -48,7 +48,7 @@ class ProviderSelectForm(forms.Form):
     """
     provider = Provider.objects.all()
     CHOICES = [(0, '-----')]
-    CHOICES += [(p.id, p.name) for p in Provider.objects.all()]
+    # CHOICES += [(p.id, p.name) for p in Provider.objects.all()]
     provider = forms.ChoiceField(label=u'поставщик', widget=forms.Select(), choices=CHOICES)
     onlyservice = forms.BooleanField(label=u'только услуги', widget=forms.CheckboxInput())  
 
@@ -59,3 +59,12 @@ class ClientForm(forms.ModelForm):
     class Meta:
         model = Client
         fields = ('name', 'phone', 'email', 'discont', 'address', 'comment')
+
+class ReqClientSelectForm(forms.Form):
+    u"""
+    список для выбора поставщиков
+    """
+    # список
+    CHOICES = [(0, '-----')]
+    # CHOICES += [(p.id, p.name) for p in Client.objects.filter(id__in=free_reqlists)]
+    client = forms.ChoiceField(label=u'Клиент', widget=forms.Select(), choices=CHOICES)

@@ -1,0 +1,14 @@
+{% extends "ajax.html" %}
+{% block content %}
+    {% if objlist %}
+        {% for obj in objlist %}
+            <div class="row-fluid">
+                <div class="span3">
+                    {{ obj.name }}
+                </div>
+            </div>
+        {% endfor %}
+    {% else %}
+        <p>Данные не найдены</p>
+    {% endif %}
+{% endblock content %}
