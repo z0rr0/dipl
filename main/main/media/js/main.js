@@ -1,7 +1,8 @@
 /*
  for djago Cross Site Request Forgery protection (CSRF)
+ https://docs.djangoproject.com/en/1.4/ref/contrib/csrf/
 */
-$(document).ajaxSend(function(event, xhr, settings) {
+jQuery(document).ajaxSend(function(event, xhr, settings) {
     function getCookie(name) {
         var cookieValue = null;
         if (document.cookie && document.cookie != '') {
