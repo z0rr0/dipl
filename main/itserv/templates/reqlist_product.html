@@ -1,0 +1,27 @@
+{% load itags %}
+{% if objlist %}
+    {% for obj in objlist %}
+        <div class="row-fluid">
+            <div class="well span10">
+                <h4>
+                    {{ obj.name }}
+                    {% if obj.service %}
+                        <i class="icon-flag"></i>
+                    {% endif %}
+                    <span class="label">{{ obj.provider.name }}</span>
+                </h4>
+                {{ obj.price|rusnum }} руб.
+                {% if not obj.service %}
+                    <span class="badge badge-info">{{ obj.rest }}</span>
+                {% endif %}
+                <br /><br />
+                <button class="btn btn-mini btn-primary" title="{{ obj.comment|default:'' }}">
+                    <i class="icon-shopping-cart icon-white"></i>
+                    Добавить &raquo;
+                </button>
+            </div>
+        </div>
+    {% endfor %}
+{% else %}
+    <p>Данные не найдены</p>
+{% endif %}

@@ -192,3 +192,24 @@ function delete_req(id) {
             alert(error_msg);
         });
 }
+// get all product for client
+function get_product() {
+    $('#div_product').html('<p>Формирование списка товаров...</p>');
+    $.ajax({
+        url: '/reqlist/product/',
+        type: 'POST',
+        data: {
+            client: $('#id_client').val(),
+            name: $('#id_search').val()
+        },
+        dataType: 'html',
+        context: document.body,
+        success: function (data) {
+            $('#div_product').html(data);
+        },
+        error: function () {
+            error_msg = "<p>Ошибка обработки данных. Возможно у Вас не хватает прав или нет соединения с сервером.</p>";
+            $('#div_product').html(error_msg);
+        },
+    });
+}

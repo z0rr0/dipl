@@ -102,15 +102,16 @@ urlpatterns = patterns('',
     url(r'^reqlists/$', 'itserv.views.reqlist_all', {
         'vtemplate': 'reqlist_home.html'}),
     # заявки и товары для них
-    url(r'^product/req/$', 'itserv.views.obj_all_ajax', {
-        'vtemplate': 'product_req.html',
-        'model': Product}),
+    url(r'^reqlist/product/$', 'itserv.views.reqlist_client_ajax', {
+        'vtemplate': 'reqlist_product.html'}),
     # поиск заявок по клиенту
     url(r'^reqlist/search/$', 'itserv.views.reqlist_search', {
         'vtemplate': 'reqlist_search.html'}),
     url(r'^reqlist/ajdel/(?P<id>\d+)/?$', 'itserv.views.obj_delete_ajax', {
         'model': Reqlist,
         'perm': 'itserv.delete_reqlist'}),
+    url(r'^reqlist/add/(?P<client>\d+)/?$', 'itserv.views.reqlist_add', {
+        'vtemplate': 'reqlist_add.html'}),
 
 )
 

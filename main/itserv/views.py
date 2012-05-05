@@ -114,7 +114,7 @@ def get_obj_form(request, setobrj, SetForm):
         form = SetForm(instance=setobrj)
     return form, setobrj, saved
 
-permission_required('itserv.change_provider')
+@permission_required('itserv.change_provider')
 def provider_edit(request, id, vtemplate):
     u""" 
     Редактирование данных о поставщике 
@@ -127,7 +127,7 @@ def provider_edit(request, id, vtemplate):
         return redirect('/providers/')
     return TemplateResponse(request, vtemplate, {'form': form, 'action': u'Редактирование'})
 
-permission_required('itserv.add_provider')
+@permission_required('itserv.add_provider')
 def provider_add(request, vtemplate):
     u""" 
     Редактирование данных о поставщике 
@@ -161,6 +161,7 @@ def product_all(request, vtemplate):
     form.fields['provider'].choices += [(p.id, p.name) for p in Provider.objects.all()]
     return TemplateResponse(request, vtemplate, {'form': form})
 
+# private function
 def pagination_info(objs, onpage, page):
     u"""
     Возвращает переменные для постраничного просмотра
@@ -207,7 +208,7 @@ def product_search(request, vtemplate):
     return TemplateResponse(request, vtemplate, {'products': products, 'provider': prov,
         'page': page, 'allpage': iter_page})
 
-permission_required('itserv.change_product')
+@permission_required('itserv.change_product')
 def product_edit(request, id, vtemplate):
     u""" 
     Редактирование данных о поставщике 
@@ -220,7 +221,7 @@ def product_edit(request, id, vtemplate):
         return redirect('/products/?provider=' + str(product.provider.id))
     return TemplateResponse(request, vtemplate, {'form': form, 'action': u'Редактирование'})
 
-permission_required('itserv.add_product')
+@permission_required('itserv.add_product')
 def product_add(request, vtemplate):
     u""" 
     Редактирование данных о поставщике 
@@ -232,7 +233,7 @@ def product_add(request, vtemplate):
         return redirect('/products/?provider=' + str(product.provider.id))
     return TemplateResponse(request, vtemplate, {'form': form, 'action': u'Добавление'})
 
-permission_required('itserv.add_product')
+@permission_required('itserv.add_product')
 def product_manyadd(request, extra_num, vtemplate):
     u"""
     Добавление сразу нескольких товарос/услуг
@@ -294,7 +295,7 @@ def product_smallview(request, id, vtemplate):
         page = 1
     return TemplateResponse(request, vtemplate, {'product': product, 'page': page,})
 
-permission_required('itserv.change_client')
+@permission_required('itserv.change_client')
 def client_edit(request, id, vtemplate):
     u""" 
     Редактирование данных о клиенте 
@@ -307,7 +308,7 @@ def client_edit(request, id, vtemplate):
         return redirect('/clients/')
     return TemplateResponse(request, vtemplate, {'form': form, 'action': u'Редактирование'})
 
-permission_required('itserv.add_client')
+@permission_required('itserv.add_client')
 def client_add(request, vtemplate):
     u""" 
     Редактирование данных о клиенте 
@@ -365,3 +366,27 @@ def reqlist_search(request, vtemplate):
         allsum += obj.itog
     return TemplateResponse(request, vtemplate, {'objlist': objlist, 
         'client': client_id, 'allsum': allsum, 'cols': cols})
+
+@permission_required('itserv.add_reqlist')
+def reqlist_add(request, client, vtemplate):
+    u"""
+    добавление заявки
+    """
+    client = get_object_or_404(Client, pk=int(client))
+    return TemplateResponse(request, vtemplate, {'client': client})
+
+@login_required_ajax404
+def reqlist_client_ajax(request, vtemplate):
+    u""" 
+    Список товаров, еще отсутстующих в заявке клиента, на которые еще не заключены сделки
+    """
+    try:
+        client = int(request.POST['client'])
+        name = request.POST['name']
+    except (KeyError, ValueError) as err:
+        return HttpResponseNotFound('Error, not found client info')
+    reqlist_products = Reqlist.objects.filter(contract__isnull=True, client=client).values_list('product')
+    products = Product.objects.exclude(id__in=reqlist_products).filter(Q(service=True)|Q(rest__gt=0))
+    if name:
+        products = products.filter(name__icontains=name)
+    return TemplateResponse(request, vtemplate, {'objlist': products, 'client': client})
