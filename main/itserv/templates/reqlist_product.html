@@ -8,17 +8,19 @@
                     {% if obj.service %}
                         <i class="icon-flag"></i>
                     {% endif %}
-                    <span class="label">{{ obj.provider.name }}</span>
+                    {% if obj.provider %}
+                        <span class="label">{{ obj.provider.name }}</span>
+                    {% endif %}
                 </h4>
                 {{ obj.price|rusnum }} руб.
                 {% if not obj.service %}
                     <span class="badge badge-info">{{ obj.rest }}</span>
                 {% endif %}
                 <br /><br />
-                <button class="btn btn-mini btn-primary" title="{{ obj.comment|default:'' }}">
+                <a class="btn btn-mini btn-primary" title="{{ obj.comment|default:'' }}" href="javascript:addreq_product({{ obj.id }})">
                     <i class="icon-shopping-cart icon-white"></i>
                     Добавить &raquo;
-                </button>
+                </a>
             </div>
         </div>
     {% endfor %}

@@ -114,6 +114,7 @@ urlpatterns = patterns('',
         'vtemplate': 'reqlist_add.html'}),
     url(r'^reqlist/client/(?P<client>\d+)/?$', 'itserv.views.reqlist_client', {
         'vtemplate': 'reqlist_client.html'}),
+    url(r'^reqlist/plus/(?P<client>\d+)/(?P<product>\d+)/?$', 'itserv.views.reqlist_plus'),
 
 )
 

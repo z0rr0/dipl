@@ -1,5 +1,5 @@
 {% extends "base.html" %}
-{% block title %}Добавление заявки{% endblock %}
+{% block title %}Редактирование заявки{% endblock %}
 {% block pagejs %}
 <script type="text/javascript">
 $(document).ready(function() {
@@ -9,7 +9,7 @@ $(document).ready(function() {
 </script>
 {% endblock %}
 {% block content %}
-    <h1>Добавление заявки</h1>
+    <h1>Заявка</h1>
     <div class="row-fluid">
         <div class="span12">
             <br />
@@ -24,7 +24,7 @@ $(document).ready(function() {
     </div>
     <div class="row-fluid">
         <div class="span4">
-            <form class="form-search" method="POST" action="javascript:get_product();">
+            <form class="form-search" method="POST" action="javascript:get_product();" id="product_search">
                 {% csrf_token %}{{ form.management_form }}
                 &nbsp;&nbsp;&nbsp;&nbsp;
                 <input type="text" id="id_search" class="input-medium search-query"
@@ -34,8 +34,12 @@ $(document).ready(function() {
                     Поиск
                 </button>
             </form>
-            <div class="container-fluid"  id="div_product"  style="max-height: 500px; overflow: auto;"></div>
+            <div class="container-fluid"  id="div_product"  style="max-height: 500px; overflow: auto;">
+                <p>Формирование списка заявки...</p>
+            </div>
         </div>
-        <div class="span8" id="div_reqlist">заявка на товары</div>
+        <div class="span8" id="div_reqlist">
+            <p>Формирование списка товаров...</p>
+        </div>
     </div>
 {% endblock content %}

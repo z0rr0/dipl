@@ -123,6 +123,13 @@ function val_validate(val_id, force) {
     if (isNaN(val)) return false;
     else return val;
 }
+function unint_validate(val_id, forse) {
+    str = $(val_id).val();
+    val = parseInt(str);
+    if (forse) val = Math.abs(val);
+    if (isNaN(val) || (val == 0)) return false;
+    else return val;
+}
 function torusdec (val_id) {
     str = $(val_id).val();
     str = jQuery.trim(str.replace(/,/gi, "."));
@@ -186,7 +193,16 @@ function reqlist_search() {
 // delete product record
 function delete_req(id) {
     $.get('/reqlist/ajdel/' + id, function(data) {
-            reqlist_search()
+            reqlist_search();
+        }).error(function() { 
+            error_msg = "Ошибка обработки данных. Возможно у Вас не хватает прав или нет соединения с сервером.";
+            alert(error_msg);
+        });
+}
+function delete_reqlist(id) {
+    $.get('/reqlist/ajdel/' + id, function(data) {
+            get_product();
+            get_reqlist();
         }).error(function() { 
             error_msg = "Ошибка обработки данных. Возможно у Вас не хватает прав или нет соединения с сервером.";
             alert(error_msg);
@@ -194,7 +210,6 @@ function delete_req(id) {
 }
 // get all product for client
 function get_product() {
-    $('#div_product').html('<p>Формирование списка товаров...</p>');
     $.ajax({
         url: '/reqlist/product/',
         type: 'POST',
@@ -215,7 +230,6 @@ function get_product() {
 }
 // get all reqlist for client
 function get_reqlist() {
-    $('#div_reqlist').html('<p>Формирование списка заявки...</p>');
     $.ajax({
         url: '/reqlist/client/' + $('#id_client').val(),
         type: 'GET',
@@ -227,6 +241,53 @@ function get_reqlist() {
         error: function () {
             error_msg = "<p>Ошибка обработки данных. Возможно у Вас не хватает прав или нет соединения с сервером.</p>";
             $('#div_reqlist').html(error_msg);
+        },
+    });
+}
+// sent update reqlist
+function update_reqlist() {
+    datas = {'len': $("#countreq").val()};
+    validate = true;
+    for (var i = 1; i <= $("#countreq").val(); i++) {
+        datas['id' + i] = $('#id_id_' + i).val();
+        datas['number' + i] = unint_validate('#id_number_' + i, true);
+        if (datas['number' + i]) $('#id_number_' + i).val(datas['number' + i]);
+        else validate = false;
+    };
+    if (validate) {
+        $.ajax({
+            url: '/reqlist/client/' + $('#id_client').val(),
+            type: 'POST',
+            data: datas,
+            dataType: 'html',
+            context: document.body,
+            success: function (data) {
+                $('#div_reqlist').html(data);
+            },
+            error: function () {
+                error_msg = "<p>Ошибка обработки данных. Возможно у Вас не хватает прав или нет соединения с сервером.</p>";
+                $('#div_reqlist').html(error_msg);
+            },
+        }); 
+    }
+    else {
+        alert('Пожалуйста, проверьте значения для количества товара.');
+    }
+}
+// add product in reqlist
+function addreq_product(id) {
+    $.ajax({
+        url: '/reqlist/plus/' + $('#id_client').val() + '/' + id,
+        type: 'GET',
+        dataType: 'html',
+        context: document.body,
+        success: function (data) {
+            get_product();
+            get_reqlist();
+        },
+        error: function () {
+           error_msg = "Ошибка обработки данных. Возможно у Вас не хватает прав или нет соединения с сервером.";
+            alert(error_msg);
         },
     });
 }

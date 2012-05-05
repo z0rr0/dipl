@@ -2,31 +2,45 @@
 <h3>Уже добавленные товары</h3>
 <br />
 {% if reqlists %}
-    <table class="table table-striped">
-        <tr>
-            <th>№</th>
-            <th>Товар</th>
-            <th>Цена</th>
-            <th>Количество</th>
-            <th>Итого</th>
-            <th>...</th>
-        </tr>
-        {% for req in reqlists %}
+    <form action="javascript:update_reqlist()" id="reqlist_form" method="POST">
+        {% csrf_token %}{{ form.management_form }}
+        <input type="hidden" value="{{ reqlists|length }}" id="countreq">
+        <table class="table table-striped">
             <tr>
-                <td>{{ forloop.counter }}</td>
-                <td>{{ req.product.name }}</td>
-                <td>{{ req.product.price|rusnum }}</td>
-                <td>{{ req.product.rest }}</td>
-                <td>---</td>
-                <td>{{ a }}</td>
+                <th>№</th>
+                <th>Товар</th>
+                <th>Цена</th>
+                <th>Количество</th>
+                <th>Всего</th>
+                <th></th>
             </tr>
-        {% endfor %}
-        <tr>
-            <td colspan="4"></td>
-            <td>рубли</td>
-            <td></td>
-        </tr>
-    </table>
+            {% for req in reqlists %}
+                <tr>
+                    <td>{{ forloop.counter }}</td>
+                    <td>{{ req.product.name }}</td>
+                    <td>{{ req.product.price|rusnum }}</td>
+                    <td>
+                        <input class="input-mini" type="text" value="{{ req.number }}" name="number" id="id_number_{{ forloop.counter }}">
+                        <input type="hidden" name="id" value="{{ req.id }}" id="id_id_{{ forloop.counter }}">
+                    </td>
+                    <td>{{ req.itog|rusnum }}</td>
+                    <td><a class="btn btn-danger" href="javascript:delete_reqlist({{ req.id }})" title="Удаление">
+                        <i class="icon-trash icon-white"></i>
+                        </a>
+                    </td>
+                </tr>
+            {% endfor %}
+            <tr>
+                <td colspan="4"><strong>Итого:</strong></td>
+                <td><strong>{{ allsum|rusnum }}</strong></td>
+                <td></td>
+            </tr>
+        </table>
+        <button class="btn btn-primary" type="submit">
+            <i class="icon-refresh icon-white"></i>
+            Сохранить и пересчитать
+        </button>
+    </form>
 {% else %}
     <p>В заявке клиента еще нет ни одного товара.</p>
 {% endif %}

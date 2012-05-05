@@ -396,7 +396,40 @@ def reqlist_client(request, client, vtemplate):
     u""" 
     Список заявок клиента
     """
+    c = {}
+    c.update(csrf(request))
     client = get_object_or_404(Client, pk=int(client))
+    try:
+        if request.method == 'POST':
+            countreq = request.POST['len']
+            if request.user.has_perm('itserv.change_reqlist'):
+                with transaction.commit_on_success():
+                    for i in range(1, int(countreq) + 1):
+                        id = int(request.POST['id' + str(i)])
+                        number = int(request.POST['number' + str(i)])
+                        reqlist = Reqlist.objects.filter(pk=id).update(number=number)
+    except:
+        pass
     reqlists = Reqlist.objects.filter(contract__isnull=True, client=client)
-    a = (2,3,4)
-    return TemplateResponse(request, vtemplate, {'reqlists': reqlists, 'a': a})
+    allsum = 0
+    for obj in reqlists:
+        obj.itog = obj.product.price * obj.number
+        allsum += obj.itog
+    return TemplateResponse(request, vtemplate, {'reqlists': reqlists, 'allsum': allsum})
+
+@login_required_ajax404
+@transaction.autocommit
+def reqlist_plus(request, client, product):
+    u""" 
+    Удалении данных об объекте в Ajax запросе
+    """
+    status = 'ERROR'
+    if request.user.has_perm('itserv.add_reqlist'):
+        obj = Reqlist(
+            client=get_object_or_404(Client, pk=int(client)),
+            product=get_object_or_404(Product, pk=int(product)))
+        obj.save()
+        status = 'OK'
+    else:
+        return HttpResponseNotFound('Error delete')
+    return HttpResponse(status)
