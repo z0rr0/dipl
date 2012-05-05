@@ -10,7 +10,7 @@ class Client(models.Model):
     
     """
     name = models.CharField(max_length = 127, verbose_name=u'имя', db_index=True, help_text=u'Ф.И.О. или название организации')
-    phone = models.CharField(max_length=15, verbose_name=u'телефон', help_text=u'номер телефона')
+    phone = models.CharField(max_length=20, verbose_name=u'телефон', help_text=u'номер телефона')
     email = models.EmailField(max_length=255, verbose_name=u'email', blank=True, null=True, help_text=u'адрес электронной почты')
     address = models.TextField(verbose_name = u'адрес', blank=True, null=True, help_text=u'почтовый адрес')
     discont = models.FloatField(default=0, verbose_name=u'скидка', help_text=u'постоянная скидка клиента (0-100%)')
@@ -33,7 +33,7 @@ class Provider(models.Model):
     """
     name = models.CharField(max_length=127, verbose_name=u'название', unique = True, help_text=u'название организации или предпринимателя')
     address = models.TextField(verbose_name = u'адрес', blank=True, null=True, help_text=u'почтовый адрес')
-    phone = models.CharField(max_length=15, verbose_name=u'телефон', help_text=u'номер телефона')
+    phone = models.CharField(max_length=20, verbose_name=u'телефон', help_text=u'номер телефона')
     email = models.EmailField(max_length=255, verbose_name=u'email', blank=True, null=True, help_text=u'адрес электронной почты')
     site = models.URLField(max_length=255, verbose_name=u'сайт', blank=True, null=True, help_text=u'адрес сайта поставщика (если есть)')
     comment = models.TextField(verbose_name=u'примечание', blank=True, null=True)
