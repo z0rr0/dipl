@@ -390,3 +390,13 @@ def reqlist_client_ajax(request, vtemplate):
     if name:
         products = products.filter(name__icontains=name)
     return TemplateResponse(request, vtemplate, {'objlist': products, 'client': client})
+
+@login_required_ajax404
+def reqlist_client(request, client, vtemplate):
+    u""" 
+    Список заявок клиента
+    """
+    client = get_object_or_404(Client, pk=int(client))
+    reqlists = Reqlist.objects.filter(contract__isnull=True, client=client)
+    a = (2,3,4)
+    return TemplateResponse(request, vtemplate, {'reqlists': reqlists, 'a': a})

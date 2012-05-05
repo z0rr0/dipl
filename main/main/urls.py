@@ -112,6 +112,8 @@ urlpatterns = patterns('',
         'perm': 'itserv.delete_reqlist'}),
     url(r'^reqlist/add/(?P<client>\d+)/?$', 'itserv.views.reqlist_add', {
         'vtemplate': 'reqlist_add.html'}),
+    url(r'^reqlist/client/(?P<client>\d+)/?$', 'itserv.views.reqlist_client', {
+        'vtemplate': 'reqlist_client.html'}),
 
 )
 

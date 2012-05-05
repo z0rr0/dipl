@@ -1,0 +1,32 @@
+{% load itags %}
+<h3>Уже добавленные товары</h3>
+<br />
+{% if reqlists %}
+    <table class="table table-striped">
+        <tr>
+            <th>№</th>
+            <th>Товар</th>
+            <th>Цена</th>
+            <th>Количество</th>
+            <th>Итого</th>
+            <th>...</th>
+        </tr>
+        {% for req in reqlists %}
+            <tr>
+                <td>{{ forloop.counter }}</td>
+                <td>{{ req.product.name }}</td>
+                <td>{{ req.product.price|rusnum }}</td>
+                <td>{{ req.product.rest }}</td>
+                <td>---</td>
+                <td>{{ a }}</td>
+            </tr>
+        {% endfor %}
+        <tr>
+            <td colspan="4"></td>
+            <td>рубли</td>
+            <td></td>
+        </tr>
+    </table>
+{% else %}
+    <p>В заявке клиента еще нет ни одного товара.</p>
+{% endif %}

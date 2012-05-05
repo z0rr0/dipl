@@ -213,3 +213,20 @@ function get_product() {
         },
     });
 }
+// get all reqlist for client
+function get_reqlist() {
+    $('#div_reqlist').html('<p>Формирование списка заявки...</p>');
+    $.ajax({
+        url: '/reqlist/client/' + $('#id_client').val(),
+        type: 'GET',
+        dataType: 'html',
+        context: document.body,
+        success: function (data) {
+            $('#div_reqlist').html(data);
+        },
+        error: function () {
+            error_msg = "<p>Ошибка обработки данных. Возможно у Вас не хватает прав или нет соединения с сервером.</p>";
+            $('#div_reqlist').html(error_msg);
+        },
+    });
+}
