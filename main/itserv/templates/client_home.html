@@ -42,14 +42,42 @@
                             <td>{{ client.discont|default:"---" }}</td>
                             <td>{{ client.address }}</td>
                             <td>{{ client.comment|default:"" }}</td>
-                            <td><nobr>
-                                <a class="btn btn-primary" href="/client/edit/{{ client.id }}" title="Правка">
-                                    <i class="icon-pencil icon-white"></i>
-                                </a>
-                                <a class="btn btn-danger" href="/client/delete/{{ client.id }}" title="Удаление" onclick="return confirm('Вы действительно хотите удалить клиента?');">
-                                    <i class="icon-trash icon-white"></i>
-                                </a>
-                            </nobr></td>
+                            <td width="110px">
+                                <div class="btn-group">
+                                    <button class="btn btn-inverse dropdown-toggle" data-toggle="dropdown">
+                                        <i class="icon-list-alt icon-white"></i>
+                                        действие
+                                        <span class="caret"></span>
+                                    </button>
+                                    <ul class="dropdown-menu pull-right">
+                                        <li>
+                                            <a href="/client/edit/{{ client.id }}" title="Правка">
+                                                <i class="icon-pencil"></i>
+                                                Правка
+                                            </a>
+                                        </li>
+                                        <li>
+                                            <a href="/client/delete/{{ client.id }}" title="Удаление" onclick="return confirm('Вы действительно хотите удалить клиента?');">
+                                                <i class="icon-trash"></i>
+                                                Удаление
+                                            </a>
+                                        </li>
+                                        <li class="divider"></li>
+                                        <li>
+                                            <a href="#">
+                                                <i class="icon-file"></i>
+                                                Сделки
+                                            </a>
+                                        </li>
+                                        <li>
+                                            <a href="/reqlists/?client={{ client.id }}" title="Перейти к заявкам">
+                                                <i class="icon-shopping-cart"></i>
+                                                Заявки
+                                            </a>
+                                        </li>
+                                    </ul>
+                                </div>
+                            </td>
                         </tr>
                     {% endfor %}
                 </table>
