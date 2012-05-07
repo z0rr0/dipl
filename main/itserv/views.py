@@ -415,7 +415,9 @@ def reqlist_client(request, client, vtemplate):
     for obj in reqlists:
         obj.itog = obj.product.price * obj.number
         allsum += obj.itog
-    return TemplateResponse(request, vtemplate, {'reqlists': reqlists, 'allsum': allsum})
+    allsum_disc = allsum * (1 - client.discont/100.0)
+    return TemplateResponse(request, vtemplate, {'reqlists': reqlists, 'allsum': allsum,
+        'discont': client.discont, 'allsum_disc': allsum_disc})
 
 @login_required_ajax404
 @transaction.autocommit
@@ -433,3 +435,19 @@ def reqlist_plus(request, client, product):
     else:
         return HttpResponseNotFound('Error delete')
     return HttpResponse(status)
+
+@login_required
+def contract_all(request, vtemplate, model):
+    u""" 
+    Список контрактов, с возможным фильтром номеру или клиенту
+    """
+    c = {}
+    c.update(csrf(request))
+    objlist = model.objects.all()
+    if request.method == 'POST':
+        if 'searchtext' in request.POST:
+            searchtext = request.POST['searchtext']
+            objlist = objlist.filter(Q(number__icontains=searchtext) | Q(client__name__icontains=searchtext))
+    else:
+        searchtext = ""
+    return TemplateResponse(request, vtemplate, {'objlist': objlist, 'searchtext': searchtext})

@@ -35,6 +35,13 @@
                 <td><strong>{{ allsum|rusnum }}</strong></td>
                 <td></td>
             </tr>
+            {% if discont %}
+                <tr>
+                    <td colspan="4"><strong>Итого со скидкой клиента:</strong></td>
+                    <td><strong>{{ allsum_disc|rusnum }}</strong></td>
+                    <td></td>
+                </tr>
+            {% endif %}
         </table>
         <button class="btn btn-primary" type="submit">
             <i class="icon-refresh icon-white"></i>

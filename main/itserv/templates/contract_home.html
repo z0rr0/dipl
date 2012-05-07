@@ -1,0 +1,51 @@
+{% extends "base.html" %}
+{% load itags %}
+{% block title %}Контракты{% endblock %}
+
+{% block content %}
+    <h1>Заключенные контакты</h1>
+    <div class="row-fluid">
+        <div class="span12">
+            <form class="well form-search" method="POST" action="">
+                {% csrf_token %}{{ form.management_form }}
+                <input type="text" class="search-query"
+                    name="searchtext" placeholder="поиск по договору или клиенту..." value="{{ searchtext }}">
+                <button type="submit" class="btn">Поиск</button>
+            </form>
+            {% if objlist %}
+                <table class="table table-striped">
+                    <tr>
+                        <th>№</th>
+                        <th>Договор</th>
+                        <th>Клиент</th>
+                        <th>Сотрудник</th>
+                        <th>Сумма</th>
+                        <th>Скидка</th>
+                        <th>Сумма со скидкой</th>
+                        <th></th>
+                    </tr>
+                    {% for contract in objlist %}
+                        <tr>
+                            <td>{{ forloop.counter }}</td>
+                            <td>{{ contract.number }}</td>
+                            <td>{{ contract.client.name }}</td>
+                            <td>
+                                {{ contract.user.first_name }}
+                                {{ contract.user.last_name }}
+                            </td>
+                            <td>{{ contract.total_all|rusnum }}</td>
+                            <td>{{ contract.discont }}</td>
+                            <td>{{ contract.total_disc|rusnum }}</td>
+                            <td>{{ contract.comment|default:"" }}</td>
+                            <td>
+                                
+                            </td>
+                        </tr>
+                    {% endfor %}
+                </table>
+            {% else %}
+                <p>Контакты на найдены</p>
+            {% endif %}
+        </div>
+    </div>    
+{% endblock content %}

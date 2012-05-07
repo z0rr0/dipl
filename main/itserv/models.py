@@ -74,6 +74,7 @@ class Contract(models.Model):
     Сделка
     """
     user = models.ForeignKey(User, verbose_name = u'сотрудник')
+    client = models.ForeignKey(Client, verbose_name = u'клиент')
     discont = models.FloatField(default=0, verbose_name=u'скидка', help_text=u'скидка на сделку')
     total_all = models.FloatField(default=0, verbose_name=u'сумма сделки')
     total_disc = models.FloatField(default=0, verbose_name=u'сумма со скидками')

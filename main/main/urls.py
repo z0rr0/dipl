@@ -82,8 +82,7 @@ urlpatterns = patterns('',
     # **************************************************
     url(r'^clients/$', 'itserv.views.obj_all', {
         'vtemplate': 'client_home.html',
-        'model': Client
-        }),
+        'model': Client}),
     # удаление клиента
     url(r'^client/delete/(?P<id>\d+)/?$', 'itserv.views.obj_delete', {
         'redirecturl': '/clients/',
@@ -115,6 +114,13 @@ urlpatterns = patterns('',
     url(r'^reqlist/client/(?P<client>\d+)/?$', 'itserv.views.reqlist_client', {
         'vtemplate': 'reqlist_client.html'}),
     url(r'^reqlist/plus/(?P<client>\d+)/(?P<product>\d+)/?$', 'itserv.views.reqlist_plus'),
+
+    # **************************************************
+    # КОНТРАКТЫ
+    # **************************************************
+    url(r'^contracts/$', 'itserv.views.contract_all', {
+        'vtemplate': 'contract_home.html',
+        'model': Contract}),
 
 )
 
