@@ -14,6 +14,10 @@ $(document).ready(function() {
     <h1>Заявки клиентов</h1>
     <div class="row-fluid">
         <div class="span12">
+            <p>
+                Данный раздел содержит список уже составленных заявок. 
+                Если необходимо создать новую запись, перейдите в раздел <a href="/clients/" title="Клиенты">Клиенты</a>.
+            </p>
             <form class="well form-inline" method="POST" action="">
                 {% csrf_token %}{{ form.management_form }}
                 <label for="id_client">{{ form.client.label }}</label>
