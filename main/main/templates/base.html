@@ -31,10 +31,10 @@
                   <li><a href="/about/contact/"><i class="icon-envelope icon-white"></i>
                     Контакты</a></li>
                 </ul>
-                    <form class="navbar-search pull-left" method="POST" action="/#">
+                    <form class="navbar-search pull-left" method="POST" action="/contracts/">
                         {% csrf_token %}{{ form.management_form }}
                         <i class="icon-search icon-white"></i>
-                        <input type="text" class="search-query" name="progsearch" placeholder="Поиск по договору или клиенту...">
+                        <input type="text" class="search-query" name="searchtext" placeholder="Поиск по договору или клиенту...">
                     </form>
                 <p class="navbar-text pull-right">
                     {% if user.is_authenticated %}
@@ -62,7 +62,7 @@
                   <li class="nav-header">Обрабока заказов</li>
                   <li><a href="/clients/">Клиенты</a></li>
                   <li><a href="/reqlists/">Заявки</a></li>
-                  <li><a href="/#">Контракты</a></li>
+                  <li><a href="/contracts">Контракты</a></li>
                 </ul>
               </div>
             </div>
