@@ -68,3 +68,11 @@ class ReqClientSelectForm(forms.Form):
     CHOICES = [(0, '-----')]
     # CHOICES += [(p.id, p.name) for p in Client.objects.filter(id__in=free_reqlists)]
     client = forms.ChoiceField(label=u'Клиент', widget=forms.Select(), choices=CHOICES)
+
+class ContractForm(forms.ModelForm):
+    u"""
+    Форма для добавления/правки данных о контакте
+    """
+    class Meta:
+        model = Contract
+        fields = ('user', 'client', 'number', 'discont', 'date', 'comment')  

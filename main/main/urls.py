@@ -80,7 +80,7 @@ urlpatterns = patterns('',
     # **************************************************
     # КЛИЕНТЫ
     # **************************************************
-    url(r'^clients/$', 'itserv.views.obj_all', {
+    url(r'^clients/$', 'itserv.views.client_all', {
         'vtemplate': 'client_home.html',
         'model': Client}),
     # удаление клиента
@@ -121,6 +121,18 @@ urlpatterns = patterns('',
     url(r'^contracts/$', 'itserv.views.contract_all', {
         'vtemplate': 'contract_home.html',
         'model': Contract}),
+    # добавление данных о контракте
+    url(r'^contract/add/?$', 'itserv.views.contract_add', {
+        'vtemplate': 'contract_edit.html'}),
+    # редактирование данных о клиента
+    url(r'^contract/edit/(?P<id>\d+)/?$', 'itserv.views.contract_edit', {
+        'vtemplate': 'contract_edit.html'}),
+    # удаление контракта
+    url(r'^contract/delete/(?P<id>\d+)/?$', 'itserv.views.contract_delete', {
+        'redirecturl': '/contracts/', 't': 0}),
+    url(r'^contract/delete/(?P<id>\d+)/?(?P<t>\d?)/?$', 'itserv.views.contract_delete', {
+        'redirecturl': '/contracts/'}),
+
 
 )
 

@@ -1,6 +1,7 @@
 #-*- coding: utf-8 -*-
 from django.db import models
 from django.contrib.auth.models import User
+import datetime
 
 # Для сотрудников используется стандартная модель User
 
@@ -73,13 +74,13 @@ class Contract(models.Model):
     u"""
     Сделка
     """
-    user = models.ForeignKey(User, verbose_name = u'сотрудник')
-    client = models.ForeignKey(Client, verbose_name = u'клиент')
-    discont = models.FloatField(default=0, verbose_name=u'скидка', help_text=u'скидка на сделку')
+    user = models.ForeignKey(User, verbose_name = u'сотрудник',  help_text=u'сотрудник, оформляющий сделку')
+    client = models.ForeignKey(Client, verbose_name = u'клиент',  help_text=u'клиенты, с подготовленными заявками')
+    discont = models.FloatField(default=0, verbose_name=u'скидка', help_text=u'скидка на сделку (0-100)')
     total_all = models.FloatField(default=0, verbose_name=u'сумма сделки')
     total_disc = models.FloatField(default=0, verbose_name=u'сумма со скидками')
     number = models.CharField(max_length=50, verbose_name=u'номер договора', unique = True)
-    date = models.DateField(verbose_name = u'дата', help_text = u'дата заключения сделки', db_index=True)
+    date = models.DateField(verbose_name = u'дата', help_text = u'дата заключения сделки', db_index=True, default=datetime.datetime.now())
     comment = models.TextField(verbose_name=u'примечание', blank=True, null=True)
     modified = models.DateTimeField(auto_now=True, auto_now_add=True, editable=False, help_text=u'дата редактирования объекта')
     created = models.DateTimeField(auto_now_add=True, editable=False, help_text=u'дата создания объекта')
@@ -97,7 +98,7 @@ class Reqlist(models.Model):
     Заявка
     """
     client = models.ForeignKey(Client, verbose_name = u'клиент')
-    contract = models.ForeignKey(Contract, verbose_name=u'сделка', blank=True, null=True)
+    contract = models.ForeignKey(Contract, verbose_name=u'сделка', blank=True, null=True, on_delete=models.SET_NULL)
     product = models.ForeignKey(Product, verbose_name=u'товар')
     number = models.PositiveIntegerField(default=1, verbose_name=u'количество')
     price = models.FloatField(verbose_name=u'цена', help_text=u'фиксированная цена', blank=True, null=True)

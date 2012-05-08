@@ -6,28 +6,37 @@
     <h1>Заключенные контакты</h1>
     <div class="row-fluid">
         <div class="span12">
-            <form class="well form-search" method="POST" action="">
+            <form class="well form-search" method="POST" action="/contracts/">
                 {% csrf_token %}{{ form.management_form }}
                 <input type="text" class="search-query"
                     name="searchtext" placeholder="поиск по договору или клиенту..." value="{{ searchtext }}">
                 <button type="submit" class="btn">Поиск</button>
             </form>
+            <p>
+                <a class="btn btn-success" href="/contract/add/" title="Добавление контракта">
+                    <i class="icon-plus icon-white"></i>
+                    Создать новый
+                </a>
+            </p>
             {% if objlist %}
                 <table class="table table-striped">
                     <tr>
                         <th>№</th>
                         <th>Договор</th>
+                        <th>Дата</th>
                         <th>Клиент</th>
                         <th>Сотрудник</th>
                         <th>Сумма</th>
                         <th>Скидка</th>
                         <th>Сумма со скидкой</th>
+                        <th>Примечание</th>
                         <th></th>
                     </tr>
                     {% for contract in objlist %}
                         <tr>
                             <td>{{ forloop.counter }}</td>
                             <td>{{ contract.number }}</td>
+                            <td>{{ contract.date|date:"d.m.Y" }}</td>
                             <td>{{ contract.client.name }}</td>
                             <td>
                                 {{ contract.user.first_name }}
@@ -37,8 +46,43 @@
                             <td>{{ contract.discont }}</td>
                             <td>{{ contract.total_disc|rusnum }}</td>
                             <td>{{ contract.comment|default:"" }}</td>
-                            <td>
-                                
+                            <td width="110px">
+                                <div class="btn-group">
+                                    <button class="btn btn-inverse dropdown-toggle" data-toggle="dropdown">
+                                        <i class="icon-list-alt icon-white"></i>
+                                        действие
+                                        <span class="caret"></span>
+                                    </button>
+                                    <ul class="dropdown-menu pull-right">
+                                        <li>
+                                            <a href="/contract/edit/{{ contract.id }}" title="Правка">
+                                                <i class="icon-pencil"></i>
+                                                Правка
+                                            </a>
+                                        </li>
+                                        <li>
+                                            <a href="/contract/delete/{{ contract.id }}/0/" title="Удаление, товары переходят в заявку">
+                                                <i class="icon-trash"></i>
+                                                Удаление
+                                            </a>
+                                        </li>
+                                        <li>
+                                            <a href="/contract/delete/{{ contract.id }}/1/" title="Удаление со всеми заявками">
+                                                <i class="icon-trash"></i>
+                                                Полное удаление
+                                            </a>
+                                        </li>
+                                        <!--
+                                        <li class="divider"></li>
+                                        <li>
+                                            <a href="#" title="Перейти к заявкам">
+                                                <i class="icon-shopping-cart"></i>
+                                                Товары
+                                            </a>
+                                        </li>
+                                        -->
+                                    </ul>
+                                </div>
                             </td>
                         </tr>
                     {% endfor %}

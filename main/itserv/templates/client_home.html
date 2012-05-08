@@ -5,7 +5,7 @@
     <h1>Список клиентов</h1>
     <div class="row-fluid">
         <div class="span12">
-            <form class="well form-search" method="POST" action="">
+            <form class="well form-search" method="POST" action="/clients/">
                 {% csrf_token %}{{ form.management_form }}
                 <input type="text" class="input-medium search-query"
                     name="searchtext" placeholder="поиск по имени..." value="{{ searchtext }}">
@@ -76,7 +76,7 @@
                                             </a>
                                         </li>
                                         <li>
-                                            <a href="#">
+                                            <a href="/contracts/?client={{ client.id }}" title="Контракты клиента">
                                                 <i class="icon-book"></i>
                                                 Сделки
                                             </a>

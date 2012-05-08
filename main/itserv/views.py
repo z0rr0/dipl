@@ -295,6 +295,23 @@ def product_smallview(request, id, vtemplate):
         page = 1
     return TemplateResponse(request, vtemplate, {'product': product, 'page': page,})
 
+@login_required
+def client_all(request, vtemplate, model):
+    u""" 
+    Список объектов, с возможным фильтром по имени
+    """
+    c = {}
+    c.update(csrf(request))
+    objlist, searchtext = allobj(request, model)
+    try:
+        if 'client' in request.GET:
+            client = Client.objects.get(pk=int(request.GET['client']))
+            searchtext = client.name
+            objlist = objlist.filter(name=searchtext)
+    except:
+        pass
+    return TemplateResponse(request, vtemplate, {'objlist': objlist, 'searchtext': searchtext})
+
 @permission_required('itserv.change_client')
 def client_edit(request, id, vtemplate):
     u""" 
@@ -311,7 +328,7 @@ def client_edit(request, id, vtemplate):
 @permission_required('itserv.add_client')
 def client_add(request, vtemplate):
     u""" 
-    Редактирование данных о клиенте 
+    Добавление данных о клиенте 
     """
     c = {}
     c.update(csrf(request))
@@ -445,9 +462,73 @@ def contract_all(request, vtemplate, model):
     c.update(csrf(request))
     objlist = model.objects.all()
     if request.method == 'POST':
-        if 'searchtext' in request.POST:
-            searchtext = request.POST['searchtext']
-            objlist = objlist.filter(Q(number__icontains=searchtext) | Q(client__name__icontains=searchtext))
+        searchtext = request.POST.get('searchtext', '')
+        objlist = objlist.filter(Q(number__icontains=searchtext) | Q(client__name__icontains=searchtext))
     else:
         searchtext = ""
+        try:
+            if 'client' in request.GET:
+                client = Client.objects.get(pk=int(request.GET['client']))
+                searchtext = client.name
+                objlist = objlist.filter(client__name=searchtext)
+        except:
+            pass
     return TemplateResponse(request, vtemplate, {'objlist': objlist, 'searchtext': searchtext})
+
+@permission_required('itserv.add_contract')
+def contract_add(request, vtemplate):
+    u""" 
+    Добавление данных о контракте
+    """
+    c = {}
+    c.update(csrf(request))
+    form, contract, saved = get_obj_form(request, None, ContractForm)
+    if saved:
+        return redirect('/contracts/')
+    # клиенты
+    free_reqlists = Reqlist.objects.filter(contract__isnull=True).values_list('client')
+    form.fields['client'].choices =[(p.id, p.name) for p in Client.objects.filter(id__in=free_reqlists)]
+    # сотрудники
+    free_users = User.objects.filter(is_active=True).only('id', 'last_name', 'first_name')
+    form.fields['user'].choices =[(p.id, "%s %s" % (p.first_name, p.last_name)) for p in free_users]
+    # отправка данных
+    return TemplateResponse(request, vtemplate, {'form': form, 'action': u'Добавление'})    
+
+@permission_required('itserv.change_contract')
+def contract_edit(request, id, vtemplate):
+    u""" 
+    Редактирование данных о контракте 
+    """
+    c = {}
+    c.update(csrf(request))
+    contract = get_object_or_404(Contract, id=int(id))
+    form, contract, saved = get_obj_form(request, contract, ContractForm)
+    if saved:
+        return redirect('/contracts/')
+    # клиенты
+    free_reqlists = Reqlist.objects.filter(contract__isnull=True).values_list('client')
+    # текущий клиент должен быть в списке
+    # free_reqlists = list(free_reqlists)
+    # free_reqlists.append(contract.client.id)
+    form.fields['client'].choices =[(p.id, p.name) for p in Client.objects.filter(Q(id__in=free_reqlists) | Q(pk=contract.client.id))]
+    # сотрудники
+    free_users = User.objects.filter(is_active=True).only('id', 'last_name', 'first_name')
+    form.fields['user'].choices =[(p.id, "%s %s" % (p.first_name, p.last_name)) for p in free_users]
+    # отправка данных
+    return TemplateResponse(request, vtemplate, {'form': form, 'action': u'Редактирование'})
+
+@permission_required('itserv.delete_contract')
+def contract_delete(request, id, t, redirecturl):
+    u""" 
+    Удалении данных о контракте
+
+    type (t) = 0 - заявки становятся свободными (по-умолчанию, по параметрам модели)
+    type (t) = 1 - заявки тоже удаляются
+    """
+    obj = get_object_or_404(Contract, pk=int(id))
+    with transaction.commit_on_success():
+        if t:
+            reqlists = Reqlist.objects.filter(contract=obj).delete()
+        obj.delete()
+    # return TemplateResponse(request, 'contract_home.html')
+    return HttpResponseRedirect(redirecturl)

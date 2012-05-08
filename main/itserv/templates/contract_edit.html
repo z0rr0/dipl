@@ -1,0 +1,70 @@
+{% extends "base.html" %}
+{% load widget_tweaks %}
+{% load itags %}
+{% block addjscss %}
+    <link rel="stylesheet" href="{{ MEDIA_URL }}ui/css/smoothness/jquery-ui-1.8.18.custom.css" type="text/css" />
+    <script type="text/javascript" src="{{ MEDIA_URL }}ui/jquery-ui-1.8.18.custom.min.js"></script>
+    <script type="text/javascript" src="{{ MEDIA_URL }}ui/jquery.ui.datepicker-ru.js"></script>
+    <script type="text/javascript">
+    $(document).ready(function() {
+        $('#id_date').datepicker();
+    });
+    </script>
+{% endblock addjscss %}
+{% block title %}{{ action }} контракта{% endblock %}
+
+{% block content %}
+    <h1>{{ action }} данных о контракте</h1>
+    <br />
+    <form class="form-horizontal" method="POST" action="">
+        {% csrf_token %}{{ form.management_form }}
+        <div class="control-group{{ form.number.errors|errorcss }}">
+            <label class="control-label" for="id_number">{{ form.number.label }}</label>
+            <div class="controls">
+                {{ form.number|add_class:"span3"}}<span class="help-inline">{{ form.number.errors|lower }}</span>
+            <p class="help-block">{{ form.number.help_text }}</p>
+            </div>
+        </div>
+        <div class="control-group{{ form.user.errors|errorcss }}">
+            <label class="control-label" for="id_user">{{ form.user.label }}</label>
+            <div class="controls">
+                {{ form.user|add_class:"span3"}}<span class="help-inline">{{ form.user.errors|lower }}</span>
+            <p class="help-block">{{ form.user.help_text }}</p>
+            </div>
+        </div>
+        <div class="control-group{{ form.client.errors|errorcss }}">
+            <label class="control-label" for="id_client">{{ form.client.label }}</label>
+            <div class="controls">
+                {{ form.client|add_class:"span3"}}<span class="help-inline">{{ form.client.errors|lower }}</span>
+            <p class="help-block">{{ form.client.help_text }}</p>
+            </div>
+        </div>
+        <div class="control-group{{ form.discont.errors|errorcss }}">
+            <label class="control-label" for="id_discont">{{ form.discont.label }}</label>
+            <div class="controls">
+                <div class="input-append">
+                    {{ form.discont|add_class:"span2"}}<span class="add-on"> %</span>
+                </div><span class="help-inline">{{ form.discont.errors|lower }}</span>
+            <p class="help-block">{{ form.discont.help_text }}</p>
+            </div>
+        </div>
+        <div class="control-group{{ form.date.errors|errorcss }}">
+            <label class="control-label" for="id_date">{{ form.date.label }}</label>
+            <div class="controls">
+                {{ form.date|add_class:"span2"}}<span class="help-inline">{{ form.date.errors|lower }}</span>
+            <p class="help-block">{{ form.date.help_text }}</p>
+            </div>
+        </div>
+        <div class="control-group{{ form.comment.errors|errorcss }}">
+            <label class="control-label" for="id_comment">{{ form.comment.label }}</label>
+            <div class="controls">
+                {{ form.comment|attr:"rows:2"}}<span class="help-inline">{{ form.comment.errors|lower }}</span>
+            <p class="help-block">{{ form.comment.help_text }}</p>
+            </div>
+        </div>
+        <div class="form-actions">
+            <button class="btn btn-primary" type="submit">Сохранить</button>
+            <button class="btn" type="reset">Отменить</button>
+        </div>
+    </form>
+{% endblock content %}
