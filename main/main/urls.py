@@ -124,7 +124,7 @@ urlpatterns = patterns('',
     # добавление данных о контракте
     url(r'^contract/add/?$', 'itserv.views.contract_add', {
         'vtemplate': 'contract_edit.html'}),
-    # редактирование данных о клиента
+    # редактирование данных о контракте
     url(r'^contract/edit/(?P<id>\d+)/?$', 'itserv.views.contract_edit', {
         'vtemplate': 'contract_edit.html'}),
     # удаление контракта
@@ -132,6 +132,9 @@ urlpatterns = patterns('',
         'redirecturl': '/contracts/', 't': 0}),
     url(r'^contract/delete/(?P<id>\d+)/?(?P<t>\d?)/?$', 'itserv.views.contract_delete', {
         'redirecturl': '/contracts/'}),
+    # правка набора товаров для заказа
+    url(r'^contract/addreq/(?P<id>\d+)/?$', 'itserv.views.contract_addreq', {
+        'vtemplate': 'contract_addreq.html'}),
 
 
 )

@@ -15,7 +15,7 @@
             <p>
                 <a class="btn btn-success" href="/contract/add/" title="Добавление контракта">
                     <i class="icon-plus icon-white"></i>
-                    Создать новый
+                    Добавить новый
                 </a>
             </p>
             {% if objlist %}
@@ -29,24 +29,26 @@
                         <th>Сумма</th>
                         <th>Скидка</th>
                         <th>Сумма со скидкой</th>
+                        <th>Товары</th>
                         <th>Примечание</th>
-                        <th></th>
+                        <th width="105px"></th>
                     </tr>
                     {% for contract in objlist %}
                         <tr>
                             <td>{{ forloop.counter }}</td>
                             <td>{{ contract.number }}</td>
                             <td>{{ contract.date|date:"d.m.Y" }}</td>
-                            <td>{{ contract.client.name }}</td>
+                            <td><a href="/clients/?client={{ contract.client_id }}">{{ contract.client.name }}</a></td>
                             <td>
                                 {{ contract.user.first_name }}
                                 {{ contract.user.last_name }}
                             </td>
                             <td>{{ contract.total_all|rusnum }}</td>
                             <td>{{ contract.discont }}</td>
-                            <td>{{ contract.total_disc|rusnum }}</td>
+                            <td><strong>{{ contract.total_disc|rusnum }}</strong></td>
+                            <td>{{ contract.reqlist_set.count }}</td>
                             <td>{{ contract.comment|default:"" }}</td>
-                            <td width="110px">
+                            <td>
                                 <div class="btn-group">
                                     <button class="btn btn-inverse dropdown-toggle" data-toggle="dropdown">
                                         <i class="icon-list-alt icon-white"></i>
@@ -61,8 +63,15 @@
                                             </a>
                                         </li>
                                         <li>
+                                            <a href="#" title="Правка набора товаров">
+                                                <i class="icon-check"></i>
+                                                Набор товаров
+                                            </a>
+                                        </li>
+                                        <li class="divider"></li>
+                                        <li>
                                             <a href="/contract/delete/{{ contract.id }}/0/" title="Удаление, товары переходят в заявку">
-                                                <i class="icon-trash"></i>
+                                                <i class="icon-remove"></i>
                                                 Удаление
                                             </a>
                                         </li>
@@ -72,15 +81,6 @@
                                                 Полное удаление
                                             </a>
                                         </li>
-                                        <!--
-                                        <li class="divider"></li>
-                                        <li>
-                                            <a href="#" title="Перейти к заявкам">
-                                                <i class="icon-shopping-cart"></i>
-                                                Товары
-                                            </a>
-                                        </li>
-                                        -->
                                     </ul>
                                 </div>
                             </td>

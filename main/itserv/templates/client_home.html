@@ -27,7 +27,7 @@
                         <th>Скидка</th>
                         <th>Почтовый адрес</th>
                         <th>Примечание</th>
-                        <th></th>
+                        <th width="105px"></th>
                     </tr>
                     {% for client in objlist %}
                         <tr>
@@ -42,7 +42,7 @@
                             <td>{{ client.discont|default:"---" }}</td>
                             <td>{{ client.address }}</td>
                             <td>{{ client.comment|default:"" }}</td>
-                            <td width="110px">
+                            <td>
                                 <div class="btn-group">
                                     <button class="btn btn-inverse dropdown-toggle" data-toggle="dropdown">
                                         <i class="icon-list-alt icon-white"></i>

@@ -1,0 +1,23 @@
+{% extends "base.html" %}
+{% block title %}Редактирование заказа{% endblock %}
+
+{% block content %}
+    <h1>Редактирование набора параметров заказа</h1>
+    <div class="row-fluid">
+        <div class="span12">
+            <h3>
+                № {{ contract.number }} от {{ contract.date|date:"d.m.Y" }}г.
+            </h3>
+            <p>
+                Клиент: <strong>{{ contract.client.name }}</strong>
+                <br />
+                Примечание: <em>{{ contract.comment }}</em>
+            </p>
+        </div>
+    </div>
+    <div class="row-fluid">
+        <div class="span12">
+            форма для добавление товаров в заказ
+        </div>
+    </div>
+{% endblock content %}

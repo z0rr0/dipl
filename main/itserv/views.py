@@ -390,7 +390,10 @@ def reqlist_add(request, client, vtemplate):
     добавление заявки
     """
     client = get_object_or_404(Client, pk=int(client))
-    return TemplateResponse(request, vtemplate, {'client': client})
+    client_info = [u'тел. ' + client.phone]
+    if client.discont:
+        client_info.append(u'скидка ' + str(client.discont) + '%')
+    return TemplateResponse(request, vtemplate, {'client': client, 'info': client_info})
 
 @login_required_ajax404
 def reqlist_client_ajax(request, vtemplate):
@@ -440,7 +443,7 @@ def reqlist_client(request, client, vtemplate):
 @transaction.autocommit
 def reqlist_plus(request, client, product):
     u""" 
-    Удалении данных об объекте в Ajax запросе
+    Добавление данных об объекте в Ajax запросе
     """
     status = 'ERROR'
     if request.user.has_perm('itserv.add_reqlist'):
@@ -532,3 +535,18 @@ def contract_delete(request, id, t, redirecturl):
         obj.delete()
     # return TemplateResponse(request, 'contract_home.html')
     return HttpResponseRedirect(redirecturl)
+
+@permission_required('itserv.change_contract')
+def contract_addreq(request, id, vtemplate):
+    u""" 
+    Правка набора товаров для заказа
+    """
+    contract = get_object_or_404(Contract, pk=int(id))
+    reqlists = Reqlist.objects.filter(contract__isnull=True, client=contract.client_id)
+    allsum = 0
+    for obj in reqlists:
+        obj.itog = obj.product.price * obj.number
+        allsum += obj.itog
+    allsum_disc = allsum * (1 - contract.client.discont/100.0)
+    return TemplateResponse(request, vtemplate, {'objlist': reqlists, 'contract': contract,
+        'allsum': allsum, 'allsum_disc': allsum_disc})

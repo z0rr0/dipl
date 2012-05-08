@@ -14,7 +14,8 @@ $(document).ready(function() {
         <div class="span12">
             <br />
             <h3>
-                Клиент: <em>{{ client.name }} (тел. {{ client.phone }})</em>
+                Клиент: {{ client.name }}
+                <em>{{ info|join:", " }}</em>
             </h3>
             <div style="display:none">
                 <input type="hidden" value="{{ client.id }}" name="client" id="id_client">
