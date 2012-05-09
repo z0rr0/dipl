@@ -488,7 +488,7 @@ def contract_add(request, vtemplate):
     c.update(csrf(request))
     form, contract, saved = get_obj_form(request, None, ContractForm)
     if saved:
-        return redirect('/contracts/')
+        return redirect('/contract/addreq/' + str(contract.id))
     # клиенты
     free_reqlists = Reqlist.objects.filter(contract__isnull=True).values_list('client')
     form.fields['client'].choices =[(p.id, p.name) for p in Client.objects.filter(id__in=free_reqlists)]
@@ -512,8 +512,6 @@ def contract_edit(request, id, vtemplate):
     # клиенты
     free_reqlists = Reqlist.objects.filter(contract__isnull=True).values_list('client')
     # текущий клиент должен быть в списке
-    # free_reqlists = list(free_reqlists)
-    # free_reqlists.append(contract.client.id)
     form.fields['client'].choices =[(p.id, p.name) for p in Client.objects.filter(Q(id__in=free_reqlists) | Q(pk=contract.client.id))]
     # сотрудники
     free_users = User.objects.filter(is_active=True).only('id', 'last_name', 'first_name')
@@ -545,38 +543,45 @@ def contract_addreq(request, id, vtemplate):
     c = {}
     c.update(csrf(request))
     contract = get_object_or_404(Contract, pk=int(id))
+    discont = contract.client.discont + contract.discont
     reqlists = Reqlist.objects.filter(client=contract.client_id)
     reqlists = reqlists.filter(Q(contract=contract) | Q(contract__isnull=True))
     initform = []
-    dataform = {}
+    data1 = {}
+    data2 = {}
     for obj in reqlists:
         use = True if obj.contract_id else False
         initform.append({'id': obj.id, 'number': obj.number, 'for_use': use, 'price': obj.product.price})
-        dataform[obj.id]=  {'product': obj.product.name, 'price': obj.product.price, 'itogo': obj.product.price * obj.number}
+        data1[obj.id] =  obj.product.name
+        data2[obj.id] =  obj.product.price
     # form
     ReqlistFormSet = formset_factory(ContractList, extra=0)
     if request.method == 'POST':
         formset = ReqlistFormSet(request.POST)
         if formset.is_valid():
             with transaction.commit_on_success():
+                allsum = 0
                 for form in formset:
                     data = form.cleaned_data
+                    # logger.info(data)
                     if data['for_use']:
-                        reqlst = Reqlist.filter(pk=int(data['id'])).update(
+                        reqlst = Reqlist.objects.filter(pk=int(data['id'])).update(
                             number=int(data['number']),
-                            price=F('product__price'),
+                            price=data2[data['id']],
                             contract=contract)
-                    # form.my_addfield = dataform[data['id']]
-        
-        for form in formset:
-            data = form.cleaned_data
-            form.my_addfield = dataform[data['id']]
+                        allsum += int(data['number']) * data2[data['id']]
+                    else:
+                        reqlst = Reqlist.objects.filter(pk=int(data['id'])).update(
+                            number=int(data['number']),
+                            price=None,
+                            contract=None)
+                contract.total_all = allsum
+                contract.total_disc = allsum * (1 - discont/100)
+                contract.save()
+            return redirect('/contracts/')
     else:
         formset = ReqlistFormSet(initial=initform)
-        for form in formset:
-            form.my_addfield = dataform[form.initial['id']]
     # скидка
-    discont = contract.client.discont + contract.discont
     return TemplateResponse(request, vtemplate, {'contract': contract,  'formset': formset,
-        'discont': discont})
+        'discont': discont, 'data_product': data1, 'data_price': data2 })
             

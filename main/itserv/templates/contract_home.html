@@ -46,7 +46,7 @@
                             <td>{{ contract.total_all|rusnum }}</td>
                             <td>{{ contract.discont }}</td>
                             <td><strong>{{ contract.total_disc|rusnum }}</strong></td>
-                            <td>{{ contract.reqlist_set.count }}</td>
+                            <td>{{ contract.reqlist_set|allprodnum }} ({{ contract.reqlist_set.count }})</td>
                             <td>{{ contract.comment|default:"" }}</td>
                             <td>
                                 <div class="btn-group">

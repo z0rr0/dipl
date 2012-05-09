@@ -60,7 +60,7 @@ class ClientForm(forms.ModelForm):
     u"""
     Форма для добавления/правки данных клиенте
     """
-    discont = forms.FloatField(label=u'Скидка', min_value=0, max_value=100, help_text=u'постоянная скидка клиента (0-100%)')
+    discont = forms.FloatField(label=u'Скидка', min_value=0, max_value=100, initial=0, help_text=u'постоянная скидка клиента (0-100%)')
 
     class Meta:
         model = Client
@@ -79,7 +79,7 @@ class ContractForm(forms.ModelForm):
     u"""
     Форма для добавления/правки данных о контакте
     """
-    discont = forms.FloatField(label=u'Скидка', min_value=0, max_value=100, help_text=u'скидка на сделку (0-100)')
+    discont = forms.FloatField(label=u'Скидка', min_value=0, max_value=100, initial=0, help_text=u'скидка на сделку (0-100)')
 
     class Meta:
         model = Contract
@@ -90,7 +90,7 @@ class ContractList(forms.Form):
     u"""
     Выбор товаров в заказ
     """
-    for_use = forms.BooleanField(label=u'выбрать', widget=forms.CheckboxInput())
     id = forms.IntegerField(min_value=0, widget=forms.HiddenInput)
+    for_use = forms.BooleanField(label=u'выбрать', widget=forms.CheckboxInput(), required=False)
     number = forms.IntegerField(label=u'количество', min_value=0)
     price = forms.FloatField(label=u'цена', min_value=0, widget=forms.HiddenInput)
