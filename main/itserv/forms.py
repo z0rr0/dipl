@@ -16,18 +16,22 @@ class ProductForm(forms.ModelForm):
     """
     class Meta:
         model = Product
-        fields = ('provider', 'name', 'price', 'rest', 'service', 'comment')  
+        fields = ('provider', 'name', 'price', 'rest', 'service', 'comment')
 
 class ProductSmallForm(forms.ModelForm):
     u"""
     Форма для добавления/правки данных о товаре
     """
+    price = forms.FloatField(min_value=0)
+    rest = forms.IntegerField(min_value=0)
+
     class Meta:
         model = Product
         fields = ('service', 'name', 'price', 'rest', 'comment')
         widgets = {
             # 'name': forms.TextInput(attrs={'style': 'width: 100%'}),
-            'comment': forms.TextInput()}
+            'comment': forms.TextInput(),
+        }
 
 class ProductManyForm(forms.ModelForm):
     u"""
@@ -56,6 +60,8 @@ class ClientForm(forms.ModelForm):
     u"""
     Форма для добавления/правки данных клиенте
     """
+    discont = forms.FloatField(label=u'Скидка', min_value=0, max_value=100, help_text=u'постоянная скидка клиента (0-100%)')
+
     class Meta:
         model = Client
         fields = ('name', 'phone', 'email', 'discont', 'address', 'comment')
@@ -73,6 +79,18 @@ class ContractForm(forms.ModelForm):
     u"""
     Форма для добавления/правки данных о контакте
     """
+    discont = forms.FloatField(label=u'Скидка', min_value=0, max_value=100, help_text=u'скидка на сделку (0-100)')
+
     class Meta:
         model = Contract
-        fields = ('user', 'client', 'number', 'discont', 'date', 'comment')  
+        fields = ('user', 'client', 'number', 'discont', 'date', 'comment')
+
+
+class ContractList(forms.Form):
+    u"""
+    Выбор товаров в заказ
+    """
+    for_use = forms.BooleanField(label=u'выбрать', widget=forms.CheckboxInput())
+    id = forms.IntegerField(min_value=0, widget=forms.HiddenInput)
+    number = forms.IntegerField(label=u'количество', min_value=0)
+    price = forms.FloatField(label=u'цена', min_value=0, widget=forms.HiddenInput)

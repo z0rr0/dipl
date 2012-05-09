@@ -16,6 +16,10 @@
 {% block content %}
     <h1>{{ action }} данных о контракте</h1>
     <br />
+    <p>
+        Если нужный клиент отсутствует с списке, выберите его в соответствующем
+        <a href="/clients/" title="Клиенты">разделе</a> и добавте для него товары в заявку.
+    </p>
     <form class="form-horizontal" method="POST" action="">
         {% csrf_token %}{{ form.management_form }}
         <div class="control-group{{ form.number.errors|errorcss }}">

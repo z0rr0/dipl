@@ -4,6 +4,7 @@ from django.shortcuts import render_to_response, get_object_or_404, redirect
 from django.http import HttpResponse, HttpResponseRedirect, Http404, HttpResponseNotFound
 from django.template.response import TemplateResponse
 from django.forms.models import modelformset_factory
+from django.forms.formsets import formset_factory
 from django.core.context_processors import csrf
 from django.db.models import Q, F, Sum, Count
 from django.db import transaction
@@ -402,7 +403,7 @@ def reqlist_client_ajax(request, vtemplate):
     """
     try:
         client = int(request.POST['client'])
-        name = request.POST['name']
+        name = request.POST.get('name', '')
     except (KeyError, ValueError) as err:
         return HttpResponseNotFound('Error, not found client info')
     reqlist_products = Reqlist.objects.filter(contract__isnull=True, client=client).values_list('product')
@@ -541,12 +542,41 @@ def contract_addreq(request, id, vtemplate):
     u""" 
     Правка набора товаров для заказа
     """
+    c = {}
+    c.update(csrf(request))
     contract = get_object_or_404(Contract, pk=int(id))
-    reqlists = Reqlist.objects.filter(contract__isnull=True, client=contract.client_id)
-    allsum = 0
+    reqlists = Reqlist.objects.filter(client=contract.client_id)
+    reqlists = reqlists.filter(Q(contract=contract) | Q(contract__isnull=True))
+    initform = []
+    dataform = {}
     for obj in reqlists:
-        obj.itog = obj.product.price * obj.number
-        allsum += obj.itog
-    allsum_disc = allsum * (1 - contract.client.discont/100.0)
-    return TemplateResponse(request, vtemplate, {'objlist': reqlists, 'contract': contract,
-        'allsum': allsum, 'allsum_disc': allsum_disc})
+        use = True if obj.contract_id else False
+        initform.append({'id': obj.id, 'number': obj.number, 'for_use': use, 'price': obj.product.price})
+        dataform[obj.id]=  {'product': obj.product.name, 'price': obj.product.price, 'itogo': obj.product.price * obj.number}
+    # form
+    ReqlistFormSet = formset_factory(ContractList, extra=0)
+    if request.method == 'POST':
+        formset = ReqlistFormSet(request.POST)
+        if formset.is_valid():
+            with transaction.commit_on_success():
+                for form in formset:
+                    data = form.cleaned_data
+                    if data['for_use']:
+                        reqlst = Reqlist.filter(pk=int(data['id'])).update(
+                            number=int(data['number']),
+                            price=F('product__price'),
+                            contract=contract)
+                    # form.my_addfield = dataform[data['id']]
+        
+        for form in formset:
+            data = form.cleaned_data
+            form.my_addfield = dataform[data['id']]
+    else:
+        formset = ReqlistFormSet(initial=initform)
+        for form in formset:
+            form.my_addfield = dataform[form.initial['id']]
+    # скидка
+    discont = contract.client.discont + contract.discont
+    return TemplateResponse(request, vtemplate, {'contract': contract,  'formset': formset,
+        'discont': discont})
+            

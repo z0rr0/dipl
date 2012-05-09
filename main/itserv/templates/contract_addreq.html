@@ -1,8 +1,51 @@
 {% extends "base.html" %}
+{% load widget_tweaks %}
+{% load itags %}
+{% block addjscss %}
+    <script type="text/javascript" src="{{ MEDIA_URL }}js/jshashtable-2.1.js"></script>
+    <script type="text/javascript" src="{{ MEDIA_URL }}js/jquery.numberformatter-1.2.3.jsmin.js"></script>
+    <script type="text/javascript">
+    $(document).ready(function() {
+        str = $('#discont').val();
+        $('#discont').val(jQuery.trim(str.replace(/,/gi, ".")));
+        update_itogs(true);
+        $('input[name$="-number"]').keyup(function() {
+            update_stritog($(this));
+            update_itogs(false);
+
+        });
+        function update_stritog (obj) {
+            value = jQuery.trim(obj.val());
+            value = parseInt(value);
+            if (isNaN(value)) value = 0;
+            // number
+            num = obj.attr('id').replace(/id_form-/gi, "").replace(/-number/gi, "");
+            // price
+            price = $('#id_form-' + num + '-price').val();
+            itog = $.formatNumber(price * value, {format:"#,###.00", locale:"ru"});
+            $('#itogo_' + num).html(itog);
+        }
+        function update_itogs(start) {
+            forms = $('#id_form-TOTAL_FORMS').val();
+            discont = $('#discont').val();
+            allsum = 0
+            for (var i = 0; i < forms; i++) {
+                if (start) update_stritog($('#id_form-' + i +'-number'));
+                itog = $('#itogo_' + i).html();
+                itog = $.parseNumber(itog, {format:"#,###.00", locale:"ru"});
+                allsum = allsum + itog;
+            };
+            $('#itog1').html($.formatNumber(allsum, {format:"#,###.00", locale:"ru"}));
+            allsum = allsum * (1 - discont/100);
+            $('#itog2').html($.formatNumber(allsum, {format:"#,###.00", locale:"ru"}));
+        }
+    });
+    </script>
+{% endblock addjscss %}
 {% block title %}Редактирование заказа{% endblock %}
 
 {% block content %}
-    <h1>Редактирование набора параметров заказа</h1>
+    <h1>Редактирование параметров заказа</h1>
     <div class="row-fluid">
         <div class="span12">
             <h3>
@@ -11,13 +54,56 @@
             <p>
                 Клиент: <strong>{{ contract.client.name }}</strong>
                 <br />
+                Скидка: для клинента <strong>{{ contract.client.discont }}%</strong> +
+                для сделки <strong>{{ contract.discont }}%</strong> = <strong>{{ discont }}%</strong>
+                <br />
                 Примечание: <em>{{ contract.comment }}</em>
+                <input type="hidden" value="{{ discont }}" name="discont" id="discont">
             </p>
         </div>
     </div>
     <div class="row-fluid">
         <div class="span12">
-            форма для добавление товаров в заказ
+            <form action="" id="reqlist_form" method="POST">
+            {% csrf_token %}{{ formset.management_form }}
+                <table class="table table-striped">
+                    <th>Выбор</th>
+                    <th>Товар</th>
+                    <th>Цена, руб.</th>
+                    <th>Количество, шт.</th>
+                    <th>Всего, руб.</th>
+                {% for form in formset %}
+                    <tr>
+                        <td>
+                            {{ form.id }}
+                            {{ form.price }}
+                            {{ form.for_use }}
+                        </td>
+                        <td>{{ form.my_addfield.product }}</td>
+                        <td>{{ form.my_addfield.price|rusnum }}</td>
+                        <td>{{ form.number|add_class:"input-medium" }}</td>
+                        <td>
+                            <span id="itogo_{{ forloop.counter0 }}">
+                                0,00
+                            </td>
+                    </tr>
+                {% endfor %}
+                    <tr>
+                        <td colspan="4"><strong>Итого:</strong></td>
+                        <td><strong><span id="itog1">0,00</span></strong></td>
+                    </tr>
+                    {% if discont %}
+                        <tr>
+                            <td colspan="4"><strong>Итого со скидкой клиента:</strong></td>
+                            <td><strong><span id="itog2">0,00</span></strong></td>
+                        </tr>
+                    {% endif %}
+                </table>
+                <div class="form-actions">
+                    <button class="btn btn-primary" type="submit">Сохранить</button>
+                    <button class="btn" type="reset">Отменить</button>
+                </div>
+            </form>
         </div>
     </div>
 {% endblock content %}
