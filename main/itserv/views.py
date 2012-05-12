@@ -496,8 +496,10 @@ def contract_add(request, vtemplate):
     free_users = User.objects.filter(is_active=True).only('id', 'last_name', 'first_name')
     form.fields['user'].choices =[(p.id, "%s %s" % (p.first_name, p.last_name)) for p in free_users]
     try:
-        if 'client' in request.GET and request.method != 'POST':
-            form.initial['client'] = int(request.GET['client'])
+        if request.method != 'POST':
+            form.initial['user'] = request.user.id
+            if 'client' in request.GET:
+                form.initial['client'] = int(request.GET['client'])
     except:
         pass
     # отправка данных
