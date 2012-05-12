@@ -438,7 +438,7 @@ def reqlist_client(request, client, vtemplate):
         allsum += obj.itog
     allsum_disc = allsum * (1 - client.discont/100.0)
     return TemplateResponse(request, vtemplate, {'reqlists': reqlists, 'allsum': allsum,
-        'discont': client.discont, 'allsum_disc': allsum_disc})
+        'discont': client.discont, 'allsum_disc': allsum_disc, 'client': client})
 
 @login_required_ajax404
 @transaction.autocommit
@@ -495,6 +495,11 @@ def contract_add(request, vtemplate):
     # сотрудники
     free_users = User.objects.filter(is_active=True).only('id', 'last_name', 'first_name')
     form.fields['user'].choices =[(p.id, "%s %s" % (p.first_name, p.last_name)) for p in free_users]
+    try:
+        if 'client' in request.GET and request.method != 'POST':
+            form.initial['client'] = int(request.GET['client'])
+    except:
+        pass
     # отправка данных
     return TemplateResponse(request, vtemplate, {'form': form, 'action': u'Добавление'})    
 

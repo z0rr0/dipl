@@ -43,10 +43,20 @@
                 </tr>
             {% endif %}
         </table>
-        <button class="btn btn-primary" type="submit">
-            <i class="icon-refresh icon-white"></i>
-            Сохранить и пересчитать
-        </button>
+        <div class="form-actions">
+            <button class="btn btn-primary" type="submit">
+                <i class="icon-refresh icon-white"></i>
+                Сохранить и пересчитать
+            </button>
+            <a class="btn btn-inverse" href="/contract/add/?client={{ client.id }}" title="Добавить новый контракт">
+                <i class="icon-file icon-white"></i>
+                Оформить новый контракт
+            </a>
+            <a class="btn btn-inverse" href="/contracts/?client={{ client.id }}" title="Контракты клиента">
+                <i class="icon-book icon-white"></i>
+                Все сделки клиента
+            </a>
+        </div>
     </form>
 {% else %}
     <p>В заявке клиента еще нет ни одного товара.</p>
