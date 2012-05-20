@@ -136,7 +136,11 @@ urlpatterns = patterns('',
     url(r'^contract/addreq/(?P<id>\d+)/?$', 'itserv.views.contract_addreq', {
         'vtemplate': 'contract_addreq.html'}),
 
-
+    # **************************************************
+    # ОТЧЕТЫ
+    # **************************************************
+    url(r'^reports/contracts/?$', 'itserv.views.report_contracts', {
+        'vtemplate': 'report_contracts.html'}),
 )
 
 # media content                   

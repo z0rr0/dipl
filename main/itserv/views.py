@@ -583,7 +583,7 @@ def contract_addreq(request, id, vtemplate):
                             price=None,
                             contract=None)
                 contract.total_all = allsum
-                contract.total_disc = allsum * (1 - discont/100)
+                contract.total_disc = allsum * (1 - discont/100.0)
                 contract.save()
             return redirect('/contracts/')
     else:
@@ -591,4 +591,8 @@ def contract_addreq(request, id, vtemplate):
     # скидка
     return TemplateResponse(request, vtemplate, {'contract': contract,  'formset': formset,
         'discont': discont, 'data_product': data1, 'data_price': data2 })
-            
+
+@login_required
+def report_contracts(request, vtemplate):
+    a = 2
+    return TemplateResponse(request, vtemplate, {})
