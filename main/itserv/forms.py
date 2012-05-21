@@ -94,3 +94,13 @@ class ContractList(forms.Form):
     for_use = forms.BooleanField(label=u'выбрать', widget=forms.CheckboxInput(), required=False)
     number = forms.IntegerField(label=u'количество', min_value=0)
     price = forms.FloatField(label=u'цена', min_value=0, widget=forms.HiddenInput)
+
+class GetReport(forms.Form):
+    u"""
+    формирование вида отчета
+    """
+    # список
+    CHOICES = [(0, u'по годам'), (1, u'по месяца'), (2, u'по дням'), ]
+    reptype = forms.ChoiceField(label=u'Тип', widget=forms.Select(), choices=CHOICES)
+    date1 = forms.CharField(label=u'с', widget=forms.DateInput(format="%d.%m.%Y"))
+    date2 = forms.CharField(label=u'по', widget=forms.DateInput(format="%d.%m.%Y"))

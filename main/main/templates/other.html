@@ -21,17 +21,17 @@
                 <span class="icon-bar"></span>
               </a>
               <a class="brand" href="/">ITСервис</a>
-              <div class="nav-collapse">
-                <p class="navbar-text pull-right">
-                    {% if user.is_authenticated %}
-                        <i class="icon-user icon-white"></i>
-                        Вы вошли как <a href="/accounts/logout/"  title="Выйти">{{ user.first_name  }}</a>
-                    {% else %}
-                        <a href="/accounts/login/" title="Выполнить вход">
-                          Вы не авторизованы</a>
-                    {% endif %}
-                </p>
-              </div>
+                <div class="nav-collapse">
+                  <p class="navbar-text pull-right">
+                      {% if user.is_authenticated %}
+                          <i class="icon-user icon-white"></i>
+                          Вы вошли как <a href="/accounts/logout/"  title="Выйти">{{ user.first_name  }}</a>
+                      {% else %}
+                          <a href="/accounts/login/" title="Выполнить вход">
+                            Вы не авторизованы</a>
+                      {% endif %}
+                  </p>
+                </div>
             </div>
           </div>
         </div>    

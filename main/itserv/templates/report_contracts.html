@@ -1,10 +1,30 @@
 {% extends "base.html" %}
+{% load widget_tweaks %}
 {% block title %}Отчеты по периодам{% endblock %}
-
+{% block addjscss %}
+    <link rel="stylesheet" href="{{ MEDIA_URL }}ui/css/smoothness/jquery-ui-1.8.18.custom.css" type="text/css" />
+    <script type="text/javascript" src="{{ MEDIA_URL }}ui/jquery-ui-1.8.18.custom.min.js"></script>
+    <script type="text/javascript" src="{{ MEDIA_URL }}ui/jquery.ui.datepicker-ru.js"></script>
+    <script type="text/javascript">
+    $(document).ready(function() {
+        $('#id_date').datepicker();
+    });
+    </script>
+{% endblock addjscss %}
+{# page #}
 {% block pagejs %}
 <script type="text/javascript">
 $(document).ready(function() {
-    
+    visible_date();
+    $('input[name^="date"]').datepicker();
+    $('#id_reptype').change(function () {
+        visible_date();
+        get_date_report();
+    });
+    function visible_date() {
+        if ($('#id_reptype').val() == 2) $("#dateview").show("fast");
+        else $("#dateview").hide("fast");
+    }
 })
 </script>
 {% endblock %}
@@ -13,7 +33,21 @@ $(document).ready(function() {
     <h1>Отчеты по периодам</h1>
     <div class="row-fluid">
         <div class="span12">
-            123
+            <form class="well form-inline" action="javascript:get_date_report();">
+                {% csrf_token %}{{ form.management_form }}
+                <label for="id_reptype">{{ form.reptype.label }}</label>
+                {{ form.reptype }}
+                <span id="dateview" style="display: none;">
+                    &nbsp;&nbsp;&nbsp;
+                    <label for="id_date1">{{ form.date1.label }}</label>
+                    {{ form.date1|add_class:"input-small" }}
+                    &nbsp;&nbsp;&nbsp;
+                    <label for="id_date2">{{ form.date2.label }}</label>
+                    {{ form.date2|add_class:"input-small" }}
+                    &nbsp;&nbsp;&nbsp;
+                    <button type="submit" class="btn">сформировать отчет</button>
+                </span>
+            </form>
         </div>
     </div>
     <div class="row-fluid">

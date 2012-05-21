@@ -13,6 +13,7 @@ from django.contrib import auth
 from itserv.models import *
 from itserv.forms import *
 
+from dateutil.relativedelta import relativedelta
 # import the logging library
 import logging, math
 # Get an instance of a logger
@@ -594,5 +595,14 @@ def contract_addreq(request, id, vtemplate):
 
 @login_required
 def report_contracts(request, vtemplate):
-    a = 2
-    return TemplateResponse(request, vtemplate, {})
+    u"""
+    сводный отчет продаж по датам
+    """
+    c = {}
+    c.update(csrf(request))
+    date2 = datetime.datetime.now().date()
+    date1 = date2 + relativedelta(months=-1)
+    form = GetReport(initial={'date1': date1, 'date2': date2})
+    return TemplateResponse(request, vtemplate, {'form': form})
+
+# view http://docs.python.org/library/time.html#time.strftime

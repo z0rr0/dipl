@@ -291,3 +291,10 @@ function addreq_product(id) {
         },
     });
 }
+// get date report
+function get_date_report () {
+    d1 = $('#id_date1').val();
+    d2 = $('#id_date2').val();
+    reptype = $('#id_reptype').val();
+    alert (d1 + '-' + d2 + '-' + reptype);
+}
