@@ -293,8 +293,22 @@ function addreq_product(id) {
 }
 // get date report
 function get_date_report () {
-    d1 = $('#id_date1').val();
-    d2 = $('#id_date2').val();
-    reptype = $('#id_reptype').val();
-    alert (d1 + '-' + d2 + '-' + reptype);
+    $.ajax({
+        url: '/reports/viewdiv/',
+        type: 'POST',
+        data: {
+            reptype: $('#id_reptype').val(),
+            date1: $('#id_date1').val(),
+            date2: $('#id_date2').val()
+        },
+        dataType: 'html',
+        context: document.body,
+        success: function (data) {
+            $('#report_list').html(data);
+        },
+        error: function () {
+            error_msg = "<p>Ошибка обработки данных. Возможно у Вас не хватает прав или нет соединения с сервером.</p>";
+            $('#report_list').html(error_msg);
+        },
+    });
 }

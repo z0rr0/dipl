@@ -141,6 +141,10 @@ urlpatterns = patterns('',
     # **************************************************
     url(r'^reports/contracts/?$', 'itserv.views.report_contracts', {
         'vtemplate': 'report_contracts.html'}),
+    url(r'^reports/viewdiv/?$', 'itserv.views.report_viewdiv', {
+        'vtemplate': 'report_contracts_viewdiv.html',
+        'outype': 'html'
+        }),
 )
 
 # media content                   

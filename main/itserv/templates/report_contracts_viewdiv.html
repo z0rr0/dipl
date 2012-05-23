@@ -1,0 +1,30 @@
+{% load itags %}
+{% if results %}
+    <table class="table table-striped">
+        <tr>
+            <th>Период</th>
+            <th>Количество заказов</th>
+            <th>Продано товаров</th>
+            <th>Продано услуг</th>
+            <th>Доход</th>
+        </tr>
+        {% for result in results %}
+        <tr>
+            <td>{{ result.key }}</td>
+            <td>{{ result.svod.contracts }}</td>
+            <td>{{ result.svod.product_noservice }}</td>
+            <td>{{ result.svod.product_service }}</td>
+            <td>{{ result.svod.contracts_sum|rusnum }}</td>
+        </tr>    
+        {% endfor %}
+        <tr>
+            <td><strong>ИТОГО:</strong></td>
+            <td><strong>{{ itog.contracts }}</strong></td>
+            <td><strong>{{ itog.product_noservice }}</strong></td>
+            <td><strong>{{ itog.product_service }}</strong></td>
+            <td><strong>{{ itog.contracts_sum|rusnum }}</strong></td>
+        </tr>   
+{% else %}
+    <p>Данные по требуемому запросу не найдены.</p>
+{% endif %}
+

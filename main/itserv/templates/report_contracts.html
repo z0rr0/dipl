@@ -5,22 +5,21 @@
     <link rel="stylesheet" href="{{ MEDIA_URL }}ui/css/smoothness/jquery-ui-1.8.18.custom.css" type="text/css" />
     <script type="text/javascript" src="{{ MEDIA_URL }}ui/jquery-ui-1.8.18.custom.min.js"></script>
     <script type="text/javascript" src="{{ MEDIA_URL }}ui/jquery.ui.datepicker-ru.js"></script>
-    <script type="text/javascript">
-    $(document).ready(function() {
-        $('#id_date').datepicker();
-    });
-    </script>
 {% endblock addjscss %}
 {# page #}
 {% block pagejs %}
 <script type="text/javascript">
 $(document).ready(function() {
+    $('#id_date').datepicker();
     visible_date();
     $('input[name^="date"]').datepicker();
     $('#id_reptype').change(function () {
         visible_date();
         get_date_report();
     });
+    // action
+    get_date_report();
+    // function
     function visible_date() {
         if ($('#id_reptype').val() == 2) $("#dateview").show("fast");
         else $("#dateview").hide("fast");

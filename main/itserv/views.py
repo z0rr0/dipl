@@ -14,6 +14,7 @@ from itserv.models import *
 from itserv.forms import *
 
 from dateutil.relativedelta import relativedelta
+from datetime import datetime
 # import the logging library
 import logging, math
 # Get an instance of a logger
@@ -589,7 +590,6 @@ def contract_addreq(request, id, vtemplate):
             return redirect('/contracts/')
     else:
         formset = ReqlistFormSet(initial=initform)
-    # скидка
     return TemplateResponse(request, vtemplate, {'contract': contract,  'formset': formset,
         'discont': discont, 'data_product': data1, 'data_price': data2 })
 
@@ -600,9 +600,67 @@ def report_contracts(request, vtemplate):
     """
     c = {}
     c.update(csrf(request))
-    date2 = datetime.datetime.now().date()
+    date2 = datetime.now().date()
     date1 = date2 + relativedelta(months=-1)
     form = GetReport(initial={'date1': date1, 'date2': date2})
     return TemplateResponse(request, vtemplate, {'form': form})
 
-# view http://docs.python.org/library/time.html#time.strftime
+def get_report(contract_in, reptype):
+    u"""
+    функция возращает список сгруппированного по периодам сводного отчета
+    """
+    taketype = ['year', 'month', 'day']
+    dates = contract_in.dates('date', taketype[reptype], order='DESC')
+    results = []
+    for date in dates:
+        result = {}
+        if reptype == 2:
+            contract = contract_in.filter(date=date)
+            key = date.strftime('%d.%m.%Y')
+        elif reptype == 1:
+            contract = contract_in.filter(date__month=date.month, date__year=date.year)
+            key = date.strftime('%B %Y')
+        else:
+            contract = contract_in.filter(date__year=date.year)
+            key = date.strftime('%Y')
+        # reqlists
+        reqlists = Reqlist.objects.filter(contract__in=contract)
+        contract_sum = contract.aggregate(s=Sum('total_disc'))
+        result['contracts'] = contract.count()
+        result['contracts_sum'] = contract_sum['s']
+        result['product'] = reqlists.count()
+        result['product_service'] = reqlists.filter(product__service=True).count()
+        result['product_noservice'] = result['product'] - result['product_service']
+        results.append({'key': key, 'svod': result})
+    return results
+
+
+@login_required_ajax404
+def report_viewdiv(request, vtemplate, outype):
+    u"""
+    формирование сводного отчета по датам: годам, месяцам, дням
+    """
+    status = 'ERROR'
+    if request.method == 'POST':
+        try:
+            reptype = int(request.POST['reptype'])
+            contract = Contract.objects.all()
+            if reptype == 2:
+                date1 = datetime.strptime(request.POST['date1'], '%d.%m.%Y')
+                date2 = datetime.strptime(request.POST['date2'], '%d.%m.%Y')
+                contract = contract.filter(date__gte=date1, date__lte=date2)
+            results = get_report(contract, reptype)
+            itog = {}
+            str_type_list = ('contracts', 'contracts_sum', 'product', 'product_service', 'product_noservice')
+            for s in str_type_list:
+                itog[s] = 0
+            for result in results:
+                for s in str_type_list:
+                    itog[s] += result['svod'][s]
+            status = 'OK'
+        except:
+            return HttpResponseNotFound('Error')
+    else:
+        return HttpResponseNotFound('No POST data')
+    # return HttpResponse(status)
+    return TemplateResponse(request, vtemplate, {'results': results, 'itog': itog})
