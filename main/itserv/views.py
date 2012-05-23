@@ -634,7 +634,6 @@ def get_report(contract_in, reptype):
         results.append({'key': key, 'svod': result})
     return results
 
-
 @login_required_ajax404
 def report_viewdiv(request, vtemplate, outype):
     u"""

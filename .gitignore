@@ -13,3 +13,4 @@ conf/*
 main/main/static/*
 main/main/media/keys/*
 main/main/media/license/*
+.idea/*
