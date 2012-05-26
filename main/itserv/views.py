@@ -16,7 +16,7 @@ from itserv.forms import *
 from dateutil.relativedelta import relativedelta
 from datetime import datetime
 # import the logging library
-import logging, math
+import logging, math, csv
 # Get an instance of a logger
 logger = logging.getLogger(__name__)
 
@@ -634,19 +634,21 @@ def get_report(contract_in, reptype):
         results.append({'key': key, 'svod': result})
     return results
 
-@login_required_ajax404
-def report_viewdiv(request, vtemplate, outype):
+def get_report_result(request):
     u"""
-    формирование сводного отчета по датам: годам, месяцам, дням
+    получение данных из GET запроса при формирование отчета
     """
-    status = 'ERROR'
-    if request.method == 'POST':
+    urlstr = []
+    if 'reptype' in request.GET:
         try:
-            reptype = int(request.POST['reptype'])
+            urlstr.append('reptype=' + request.GET['reptype'])
+            urlstr.append('date1=' + request.GET['date1'])
+            urlstr.append('date2=' + request.GET['date2'])
+            reptype = int(request.GET['reptype'])
             contract = Contract.objects.all()
             if reptype == 2:
-                date1 = datetime.strptime(request.POST['date1'], '%d.%m.%Y')
-                date2 = datetime.strptime(request.POST['date2'], '%d.%m.%Y')
+                date1 = datetime.strptime(request.GET['date1'], '%d.%m.%Y')
+                date2 = datetime.strptime(request.GET['date2'], '%d.%m.%Y')
                 contract = contract.filter(date__gte=date1, date__lte=date2)
             results = get_report(contract, reptype)
             itog = {}
@@ -656,10 +658,47 @@ def report_viewdiv(request, vtemplate, outype):
             for result in results:
                 for s in str_type_list:
                     itog[s] += result['svod'][s]
-            status = 'OK'
         except:
-            return HttpResponseNotFound('Error')
+            return False
     else:
-        return HttpResponseNotFound('No POST data')
-    # return HttpResponse(status)
-    return TemplateResponse(request, vtemplate, {'results': results, 'itog': itog})
+        return False
+    return {'results': results, 'itog': itog, 'urlstr': '?' + '&'.join(urlstr)}
+
+
+@login_required_ajax404
+def report_view_div(request, vtemplate):
+    u"""
+    формирование сводного отчета по датам: годам, месяцам, дням
+    """
+    status = 'ERROR'
+    alldata = get_report_result(request)
+    if alldata:
+        status = 'OK'
+    else:
+        return HttpResponseNotFound('Error')
+    return TemplateResponse(request, vtemplate, alldata)
+
+@login_required
+def report_view_csv(request):
+    u"""
+    формирование сводного отчета по датам: годам, месяцам, дням (CVS формат)
+    """
+    status = 'ERROR'
+    alldata = get_report_result(request)
+    if alldata:
+        status = 'OK'
+    else:
+        raise Http404
+    response = HttpResponse(mimetype='text/csv')
+    response['Content-Disposition'] = 'attachment; filename=somefilename.csv'
+    writer = csv.writer(response, dialect=csv.excel)
+    writer.writerow(['Период', 'Количество заказов', 'Продано товаров', 'Продано услуг', 'Доход'])
+    for result in alldata['results']:
+        wstr = []
+        wstr.append(result['key'])
+        wstr.append(result['svod']['contracts'])
+        wstr.append(result['svod']['product_noservice'])
+        wstr.append(result['svod']['product_service'])
+        wstr.append(round(result['svod']['contracts_sum'], 2))
+        writer.writerow(wstr)
+    return response

@@ -295,7 +295,7 @@ function addreq_product(id) {
 function get_date_report () {
     $.ajax({
         url: '/reports/viewdiv/',
-        type: 'POST',
+        type: 'GET',
         data: {
             reptype: $('#id_reptype').val(),
             date1: $('#id_date1').val(),
