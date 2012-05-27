@@ -143,11 +143,16 @@ urlpatterns = patterns('',
         'vtemplate': 'report_contracts.html'}),
     url(r'^reports/viewdiv/?$', 'itserv.views.report_view_div', {
         'vtemplate': 'report_contracts_viewdiv.html',
+        'format': 'html'
         }),
-    url(r'^reports/viewexcel/?$', 'itserv.views.report_view_excel', {
-        'vtemplate': 'report_contracts_view_wex.html',
+    url(r'^reports/viewcvs/?$', 'itserv.views.report_view_div', {
+        'vtemplate': 'report_contracts_viewdiv.html',
+        'format': 'cvs'
         }),
-    url(r'^reports/viewcvs/?$', 'itserv.views.report_view_csv', ),
+    url(r'^reports/viewexcel/?$', 'itserv.views.report_view_div', {
+        'vtemplate': 'report_contracts_viewdiv.html',
+        'format': 'excel'
+        }),
 )
 
 # media content                   

@@ -8,6 +8,7 @@ from django.template import RequestContext, loader, Context
 from django.forms.formsets import formset_factory
 from django.core.context_processors import csrf
 from django.db.models import Q, F, Sum, Count
+from excel_response import ExcelResponse
 from django.db import transaction
 from django.contrib import auth
 
@@ -17,7 +18,7 @@ from itserv.forms import *
 from dateutil.relativedelta import relativedelta
 from datetime import datetime
 # import the logging library
-import logging, math, csv
+import logging, math, csv, xlwt
 # Get an instance of a logger
 logger = logging.getLogger(__name__)
 
@@ -667,7 +668,7 @@ def get_report_result(request):
 
 
 @login_required_ajax404
-def report_view_div(request, vtemplate):
+def report_view_div(request, vtemplate, format):
     u"""
     формирование сводного отчета по датам: годам, месяцам, дням
     """
@@ -677,39 +678,32 @@ def report_view_div(request, vtemplate):
         status = 'OK'
     else:
         return HttpResponseNotFound('Error')
-    return TemplateResponse(request, vtemplate, alldata)
+    response = { 'cvs': report_view_csv(request, alldata),
+        'excel': report_view_excel(request, alldata),
+        'html': TemplateResponse(request, vtemplate, alldata)
+    }
+    return response[format]
 
-@login_required
-def report_view_excel(request, vtemplate):
+def report_view_excel(request, alldata):
     u"""
-    формирование сводного отчета по датам: годам, месяцам, дням
+    формирование сводного отчета по датам: годам, месяцам, дням (формат MS Excel)
     """
-    status = 'ERROR'
-    alldata = get_report_result(request)
-    if alldata:
-        status = 'OK'
-    else:
-        raise Http404
-    response = HttpResponse(mimetype='application/x-msexcel')
-    response['Content-Disposition'] = 'attachment; filename=somefilename.xls'
-    t = loader.get_template(vtemplate)
-    c = Context(alldata)
-    response.write(t.render(c))
-    return response
+    data = [['Период', 'Количество заказов', 'Продано товаров', 'Продано услуг', 'Доход']]
+    for result in alldata['results']:
+        wstr = [result['key'], 
+            result['svod']['contracts'],
+            result['svod']['product_noservice'],
+            result['svod']['product_service'],
+            round(result['svod']['contracts_sum'], 2)]
+        data.append(wstr)
+    return ExcelResponse(data, 'exportfile')
 
-@login_required
-def report_view_csv(request):
+def report_view_csv(request, alldata):
     u"""
     формирование сводного отчета по датам: годам, месяцам, дням (CVS формат)
     """
-    status = 'ERROR'
-    alldata = get_report_result(request)
-    if alldata:
-        status = 'OK'
-    else:
-        raise Http404
     response = HttpResponse(mimetype='text/csv')
-    response['Content-Disposition'] = 'attachment; filename=somefilename.csv'
+    response['Content-Disposition'] = 'attachment; filename=exportfile.csv'
     writer = csv.writer(response, dialect=csv.excel)
     writer.writerow(['Период', 'Количество заказов', 'Продано товаров', 'Продано услуг', 'Доход'])
     for result in alldata['results']:
