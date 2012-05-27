@@ -1,6 +1,10 @@
 {% load itags %}
 {% if results %}
-    <a href="/reports/viewcvs/{{ urlstr }}">Файл CVS</a>
+    <p>
+        Экспорт:
+        <a href="/reports/viewcvs/{{ urlstr }}">CVS формат</a>,
+        {# <a href="/reports/viewexcel/{{ urlstr }}">формат MS Excel</a> #}
+    </p>
     <table class="table table-striped">
         <tr>
             <th>Период</th>

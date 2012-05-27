@@ -4,6 +4,7 @@ from django.shortcuts import render_to_response, get_object_or_404, redirect
 from django.http import HttpResponse, HttpResponseRedirect, Http404, HttpResponseNotFound
 from django.template.response import TemplateResponse
 from django.forms.models import modelformset_factory
+from django.template import RequestContext, loader, Context
 from django.forms.formsets import formset_factory
 from django.core.context_processors import csrf
 from django.db.models import Q, F, Sum, Count
@@ -677,6 +678,24 @@ def report_view_div(request, vtemplate):
     else:
         return HttpResponseNotFound('Error')
     return TemplateResponse(request, vtemplate, alldata)
+
+@login_required
+def report_view_excel(request, vtemplate):
+    u"""
+    формирование сводного отчета по датам: годам, месяцам, дням
+    """
+    status = 'ERROR'
+    alldata = get_report_result(request)
+    if alldata:
+        status = 'OK'
+    else:
+        raise Http404
+    response = HttpResponse(mimetype='application/x-msexcel')
+    response['Content-Disposition'] = 'attachment; filename=somefilename.xls'
+    t = loader.get_template(vtemplate)
+    c = Context(alldata)
+    response.write(t.render(c))
+    return response
 
 @login_required
 def report_view_csv(request):
