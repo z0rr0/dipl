@@ -2,8 +2,8 @@
 {% if results %}
     <p>
         Экспорт:
-        <a href="/reports/viewcvs/{{ urlstr }}">CVS формат</a>,
-        <a href="/reports/viewexcel/{{ urlstr }}">формат MS Excel</a>
+        <a href="/reports/view/export/{{ urlstr }}&format=cvss">CVS формат</a>,
+        <a href="/reports/view/export/{{ urlstr }}&format=excel">формат MS Excel</a>
     </p>
     <table class="table table-striped">
         <tr>

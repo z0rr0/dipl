@@ -668,7 +668,7 @@ def get_report_result(request):
 
 
 @login_required_ajax404
-def report_view_div(request, vtemplate, format):
+def report_view_div(request, vtemplate):
     u"""
     формирование сводного отчета по датам: годам, месяцам, дням
     """
@@ -678,11 +678,24 @@ def report_view_div(request, vtemplate, format):
         status = 'OK'
     else:
         return HttpResponseNotFound('Error')
-    response = { 'cvs': report_view_csv(request, alldata),
-        'excel': report_view_excel(request, alldata),
-        'html': TemplateResponse(request, vtemplate, alldata)
-    }
-    return response[format]
+    return TemplateResponse(request, vtemplate, alldata)
+
+@login_required
+def report_view_export(request):
+    u"""
+    формирование экспорта сводного отчета по датам
+    """
+    if 'format' in request.GET and request.GET['format'] in ('cvs', 'excel'):
+        format = request.GET['format']
+        alldata = get_report_result(request)
+        response = { 
+            'cvs': report_view_csv,
+            'excel': report_view_excel,
+        }
+    else:
+        raise Http404
+    response = response[format]
+    return response(request, alldata)
 
 def report_view_excel(request, alldata):
     u"""
@@ -694,7 +707,7 @@ def report_view_excel(request, alldata):
             result['svod']['contracts'],
             result['svod']['product_noservice'],
             result['svod']['product_service'],
-            round(result['svod']['contracts_sum'], 2)]
+            result['svod']['contracts_sum']]
         data.append(wstr)
     return ExcelResponse(data, 'exportfile')
 
