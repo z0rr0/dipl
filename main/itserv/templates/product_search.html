@@ -18,29 +18,30 @@
         </div>
     </div>
     <div class="span10">
-        {% if allpage|length > 1 %}
-            <div class="pagination pagination-right">
-                <ul>
-                    <li><a href="javascript:product_search({{ page|add:-1 }})">&laquo;</a></li>
-                    {% for p in allpage %}
-                        {% if p == page %}
-                            <li class="active">
-                                <a href="#">{{ p }}</a>
-                            </li>
-                        {% else %}
-                            <li>
-                                <a href="javascript:product_search({{ p }})">{{ p }}</a>
-                            </li>
-                        {% endif %}
-                    {% endfor %}
-                    <li><a href="javascript:product_search({{ page|add:1 }})">&raquo;</a></li>
-                </ul>
-            </div>
-        {% endif %}
+        <div class="pagination pagination-right">
+            <ul>
+                {% if products.has_previous %}
+                     <li><a href="javascript:product_search({{ products.previous_page_number }})">&laquo;</a></li>
+                {% endif %}
+                {% for p in paginator.page_range %}
+                    {% if p == products.number %}
+                        <li class="active">
+                            <a href="#">{{ p }}</a>
+                        </li>
+                    {% else %}
+                        <li>
+                            <a href="javascript:product_search({{ p }})">{{ p }}</a>
+                        </li>
+                    {% endif %}
+                {% endfor %}
+                {% if products.has_next %}
+                     <li><a href="javascript:product_search({{ products.next_page_number }})">&raquo;</a></li>
+                {% endif %}
+            </ul>
+        </div>
     </div>
 </div>
-
-{% if products %}
+{% if products.object_list %}
     <div class="row-fluid">
         <div class="span3">
             <strong>Название</strong>
@@ -59,7 +60,7 @@
         </div>
     </div>
     <hr />
-    {% for product in products %}
+    {% for product in products.object_list %}
         <div class="row-fluid" id="product_{{ product.id }}">
             <div class="span3">
                 {{ product.name }}
@@ -78,7 +79,7 @@
             </div>
             <div class="span2">
                 <nobr>
-                <a class="btn btn-info" href="javascript:smalledit({{ product.id }}, {{ page }})" title="Быстрая правка">
+                <a class="btn btn-info" href="javascript:smalledit({{ product.id }}, {{ products.number }})" title="Быстрая правка">
                     <i class="icon-refresh icon-white"></i>
                 </a>
                 <a class="btn btn-primary" href="/product/edit/{{ product.id }}" title="Правка">

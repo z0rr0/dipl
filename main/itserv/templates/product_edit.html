@@ -26,7 +26,7 @@
             <label class="control-label" for="id_price">{{ form.price.label }}</label>
             <div class="controls">
                 <div class="input-append">
-                    {{ form.price|add_class:"span2"}}<span class="add-on"> руб.</span>
+                    {{ form.price|add_class:"input-small"}}<span class="add-on">руб.</span>
                 </div><span class="help-inline">{{ form.price.errors|lower }}</span>
             <p class="help-block">{{ form.price.help_text }}</p>
             </div>
@@ -35,7 +35,7 @@
             <label class="control-label" for="id_rest">{{ form.rest.label }}</label>
             <div class="controls">
                 <div class="input-append">
-                    {{ form.rest|add_class:"span2"}}<span class="add-on">шт.</span>
+                    {{ form.rest|add_class:"input-small"}}<span class="add-on">шт.</span>
                 </div><span class="help-inline">{{ form.rest.errors|lower }}</span>
             <p class="help-block">{{ form.rest.help_text }}</p>
             </div>

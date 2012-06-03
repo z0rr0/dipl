@@ -2,9 +2,10 @@
 from django.contrib.auth.decorators import login_required, permission_required, user_passes_test
 from django.shortcuts import render_to_response, get_object_or_404, redirect
 from django.http import HttpResponse, HttpResponseRedirect, Http404, HttpResponseNotFound
+from django.core.paginator import Paginator, EmptyPage, PageNotAnInteger
+from django.template import RequestContext, loader, Context
 from django.template.response import TemplateResponse
 from django.forms.models import modelformset_factory
-from django.template import RequestContext, loader, Context
 from django.forms.formsets import formset_factory
 from django.core.context_processors import csrf
 from django.db.models import Q, F, Sum, Count
@@ -149,8 +150,6 @@ def product_all(request, vtemplate):
     u""" 
     Список товаров
     """
-    # first = Provider.objects.all()[0]
-    # first = first.id
     first = 0
     onlyservice = False
     try:
@@ -166,52 +165,41 @@ def product_all(request, vtemplate):
     form.fields['provider'].choices += [(p.id, p.name) for p in Provider.objects.all()]
     return TemplateResponse(request, vtemplate, {'form': form})
 
-# private function
-def pagination_info(objs, onpage, page):
-    u"""
-    Возвращает переменные для постраничного просмотра
-    """
-    countobj = objs.count()
-    # количество страниц, это число >=1
-    pagec = math.ceil(countobj/float(onpage))
-    pagec = 1 if pagec < 1 else pagec
-    # итератор для страниц
-    allpage = range(1, int(pagec + 1))
-    # текущая страница не должна выходить за границы
-    if page < 1:
-        page = 1
-    elif page > pagec:
-        page = pagec
-    getobj = objs[(page-1)*onpage:page*onpage]
-    return getobj, allpage, page
-
 @login_required_ajax404
 def product_search(request, vtemplate):
     u"""
     поиск товаров и/или услуг по базовым критериям
     """
-    products = Product.objects.all()
+    products_list = Product.objects.all()
     page = 1
     prov = 0
     try:
         if request.method == 'POST':
             prov = int(request.POST['provider'])
             if prov:
-                products = products.filter(provider=prov)
+                products_list = products_list.filter(provider=prov)
             service = int(request.POST['onlyservice'])
             if service:
-                products = products.filter(service=True)
+                products_list = products_list.filter(service=True)
             search = request.POST['search']
             if search:
-                products = products.filter(Q(name__icontains=search) | Q(comment__icontains=search))
+                products_list = products_list.filter(Q(name__icontains=search) | Q(comment__icontains=search))
         if 'page' in request.GET:
             page = int(request.GET['page'])
-        # постраничный просмотр
-        products, iter_page, page = pagination_info(products, PAGE_COUNT, page)
     except (KeyError, ValueError) as err:
         logger.info(err)
+    # постраничный просмотр 
+    paginator = Paginator(products_list, PAGE_COUNT)
+    try:
+        products = paginator.page(page)
+    except PageNotAnInteger:
+        # If page is not an integer, deliver first page.
+        products = paginator.page(1)
+    except EmptyPage:
+        # If page is out of range (e.g. 9999), deliver last page of results.
+        products = paginator.page(paginator.num_pages)
     return TemplateResponse(request, vtemplate, {'products': products, 'provider': prov,
-        'page': page, 'allpage': iter_page})
+        'paginator': paginator})
 
 @permission_required('itserv.change_product')
 def product_edit(request, id, vtemplate):
