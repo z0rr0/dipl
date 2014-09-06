@@ -1,4 +1,4 @@
 dipl
 ====
 
-Testing diplom work
+Testing work
